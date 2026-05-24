@@ -5,7 +5,7 @@ Reusable agent instructions for building Expo apps fast.
 ## Install Into A New Project
 
 ```sh
-git clone --depth 1 <this-repo-url> docs
+git clone --depth 1 https://github.com/anilsoylu/shipit.git docs
 rm -rf docs/.git
 cp docs/AGENTS.md AGENTS.md
 cp docs/CLAUDE.md CLAUDE.md
