@@ -14,6 +14,7 @@ Primary instructions:
 - `docs/aso.md`
 - `docs/skills.md`
 - `docs/ship-checklist.md`
+- `docs/dynamic-workflows-claude-code.md`
 
 If this file is inside `docs/`, use sibling paths instead.
 

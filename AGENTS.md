@@ -14,6 +14,7 @@ If this file is copied to the project root, read:
 - `docs/aso.md`
 - `docs/skills.md`
 - `docs/ship-checklist.md`
+- `docs/dynamic-workflows-claude-code.md`
 
 If this file remains inside `docs/`, read the sibling files with the same names.
 
