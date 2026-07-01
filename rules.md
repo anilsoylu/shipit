@@ -47,6 +47,7 @@ Do not re-litigate these defaults unless the user explicitly overrides one.
 
 ## Decision Rules
 
+- If the user has not specified the stack, run stack-picker.md and take its defaults.
 - If the user has not specified backend details, use Fastify, Drizzle, Postgres, Redis. If they request another stack, follow backend.md and its swap contract.
 - If the user has not specified auth, use Clerk. If they request another provider, follow auth.md and its swap contract.
 - If the product has digital in-app subscriptions or digital content consumed in-app, use RevenueCat/IAP first.

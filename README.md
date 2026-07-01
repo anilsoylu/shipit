@@ -12,9 +12,12 @@ cp docs/CLAUDE.md CLAUDE.md
 ```
 
 Then start the agent with the app idea and tell it to follow `docs/rules.md`.
+Recommended starting point after install: run `docs/stack-picker.md` to lock the
+stack in seconds.
 
 ## Files
 
+- `stack-picker.md`: interactive front door — fast-path default + 6 questions to pick swaps.
 - `rules.md`: non-negotiable agent rules and default decisions.
 - `workflow.md`: execution order from app brief to release, plus Claude Code orchestration guidance.
 - `stack.md`: default Expo, API, DB, auth, metrics, payment, and AI stack.

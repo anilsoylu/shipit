@@ -245,31 +245,139 @@ Use Stripe skills only when server-driven Stripe work is in scope: checkout, pay
 
 ## LLM Docs Registry
 
+Verified: 2026-07-01 (skill slugs API-resolved on skills.sh; llms.txt URLs
+`curl`-checked 200). This is the single directory the stack-picker and every
+domain doc link into.
+
 When integrating any external service, first look for its `llms.txt` or
 `llms-full.txt` (usually at `<docs-domain>/llms.txt`) and its official
 agent skill on https://www.skills.sh/. Prefer these over training-data
 recall — they reflect the current SDK. If neither exists, use the official
-docs linked in the relevant playbook.
+docs linked in the relevant playbook. Slugs and URLs drift — re-verify on a
+cadence and refresh the date stamp above.
 
-| Service | llms.txt / docs | Use for |
-|---|---|---|
-| Clerk | https://clerk.com/docs/llms-full.txt | Expo SDK patterns, backend request verification, webhooks, auth flows, token handling. |
-| better-auth | https://www.better-auth.com/llms.txt | Self-hosted TS auth: Expo client plugin, JWT/JWKS verification, Drizzle adapter. |
-| Supabase Auth | https://supabase.com/llms.txt | Supabase Auth client, JWT signing keys/JWKS, RN session handling. |
-| Stripe | https://docs.stripe.com/llms.txt | Checkout, payment intents, subscriptions, Connect, webhooks. |
-| Expo | https://docs.expo.dev/llms.txt | Expo SDK, config plugins, EAS, native APIs. |
-| Drizzle | https://orm.drizzle.team/llms.txt | Schema-in-TS, queries, migrations. |
-| NativeWind | https://www.nativewind.dev/llms.txt | Tailwind styling for React Native / Expo. |
-| RevenueCat | https://www.revenuecat.com/docs/llms.txt | IAP, subscriptions, entitlements, paywalls. |
-| PostHog | https://posthog.com/llms.txt | Product analytics, feature flags, session replay. |
-| Sentry | https://docs.sentry.io/llms.txt | Error tracking, performance, SDK setup. |
-| Fastify | https://fastify.dev/llms.txt | Node backend routing, plugins, hooks. |
-| Hono | https://hono.dev/llms.txt | Portable TS API (Node/Bun/edge), JWK middleware, routing. |
-| Go (chi + golang-migrate) | check https://go-chi.io and https://github.com/golang-migrate/migrate docs | Go API router, migrations, pgx/sqlc, JWKS verify. |
-| Rust (axum + sqlx) | check https://docs.rs/axum and https://github.com/launchbadge/sqlx docs | Rust API framework, sqlx migrations, JWT/JWKS. |
-| Python (FastAPI + Alembic) | check https://fastapi.tiangolo.com and https://alembic.sqlalchemy.org docs | FastAPI, SQLAlchemy/Alembic migrations, PyJWT JWKS verify. |
+Skill column = `npx skills add <slug>`. `—` = no authoritative vendor pack; use
+the llms.txt.
 
-Verified: 2026-07-01
+### Mobile core (Expo / RN)
+
+| Service | Skill | llms.txt | Use for |
+|---|---|---|---|
+| Expo | `expo/skills` | https://docs.expo.dev/llms-full.txt | Expo SDK, config plugins, EAS, native APIs, Expo Router. |
+| NativeWind | `expo/skills` (expo-tailwind-setup) | https://www.nativewind.dev/llms.txt | Tailwind styling for React Native / Expo. |
+| Tamagui | `tamagui/tamagui` | https://tamagui.dev/llms.txt | Compiler-optimized universal design system (web+native). |
+| Gluestack UI | `gluestack/agent-skills` | https://gluestack.io/llms-full.txt | Copy-paste universal components on Tailwind v4 / NativeWind. |
+| Unistyles | — | https://www.unistyl.es/llms.txt | Fast StyleSheet engine (C++ core, no theme re-renders). |
+| Reanimated + Gesture Handler | — | https://docs.swmansion.com/react-native-reanimated/llms.txt | UI-thread 60/120fps animation + native gestures. |
+| React Navigation | — | https://reactnavigation.org/llms-full.txt | Imperative nav when not using Expo Router. |
+| VisionCamera / MMKV | `margelo/react-native-skills` | https://docs.expo.dev/llms-full.txt | Advanced camera (frame processors) + fast synchronous KV. |
+
+### Auth
+
+| Service | Skill | llms.txt | Use for |
+|---|---|---|---|
+| Clerk | `clerk/skills` | https://clerk.com/docs/llms-full.txt | Hosted Expo auth: sessions, OAuth, webhooks, token handling. |
+| better-auth | `better-auth/skills` | https://www.better-auth.com/llms.txt | Self-hosted TS auth: Expo client plugin, JWT/JWKS, Drizzle adapter. |
+| Supabase Auth | `supabase/agent-skills` | https://supabase.com/llms.txt | Supabase Auth client, JWT signing keys/JWKS, RN sessions. |
+| Auth0 | `auth0/agent-skills` | check https://auth0.com/docs for llms.txt | Enterprise SSO/compliance; has a React Native skill. |
+| WorkOS | `workos/skills` | check https://workos.com/docs for llms.txt | B2B SSO, SCIM, directory sync. |
+| Firebase Auth | `firebase/agent-skills` | check https://firebase.google.com/docs (no llms.txt) | Google ecosystem / quick mobile auth. |
+
+### Backend frameworks
+
+| Service | Skill | llms.txt | Use for |
+|---|---|---|---|
+| Fastify | `mcollina/skills` | https://fastify.dev/llms.txt | Default Node TS API: low boilerplate, rich plugins. |
+| Hono | `yusukebe/hono-skill` | https://hono.dev/llms.txt | Portable TS API (Node/Bun/edge), JWK middleware. |
+| Elysia | `elysiajs/skills` | check https://elysiajs.com for llms.txt | Bun-first high-perf TS API. |
+| tRPC | `trpc/trpc` | https://trpc.io/llms.txt | End-to-end typesafe RPC between mobile and API. |
+| Convex | `get-convex/agent-skills` | https://docs.convex.dev/llms.txt | Reactive BaaS (DB + functions + live queries). |
+| Go (chi + golang-migrate) | — | check https://go-chi.io and https://github.com/golang-migrate/migrate docs | Go API router, migrations, pgx/sqlc, JWKS verify. |
+| Rust (axum + sqlx) | — | check https://docs.rs/axum and https://github.com/launchbadge/sqlx docs | Rust API framework, sqlx migrations, JWT/JWKS. |
+| Python (FastAPI + Alembic) | — | check https://fastapi.tiangolo.com and https://alembic.sqlalchemy.org docs | FastAPI, SQLAlchemy/Alembic, PyJWT JWKS verify. |
+
+### Data & ORM
+
+| Service | Skill | llms.txt | Use for |
+|---|---|---|---|
+| Drizzle | — | https://orm.drizzle.team/llms.txt | Default TS ORM: schema-in-TS, queries, migrations. |
+| Prisma | `prisma/skills` | https://www.prisma.io/docs/llms.txt | ORM alternative: generated client, Studio, broad DB support. |
+| Kysely | — | https://kysely.dev/llms.txt | Type-safe raw-SQL query builder (not a full ORM). |
+| Neon | `neondatabase/agent-skills` | https://neon.com/llms.txt | Default managed serverless Postgres with branching. |
+| Supabase (Postgres/BaaS) | `supabase/agent-skills` | https://supabase.com/llms.txt | Postgres + auth + storage + realtime in one platform. |
+| PlanetScale | `planetscale/database-skills` | https://planetscale.com/llms.txt | Scalable MySQL (Vitess) or managed Postgres with branching. |
+| Turso / libSQL | — | https://docs.turso.tech/llms.txt | SQLite at the edge or embedded/synced with a cloud tier. |
+| MongoDB | — | https://www.mongodb.com/llms.txt | Document/flexible-schema data; Atlas for managed. |
+| Expo SQLite | `expo/skills` | https://docs.expo.dev/llms.txt | Default on-device DB (works with Drizzle). |
+| PowerSync | — | https://docs.powersync.com/llms.txt | Bidirectional offline sync between on-device SQLite and Postgres. |
+
+### Cache & background jobs
+
+| Service | Skill | llms.txt | Use for |
+|---|---|---|---|
+| Redis | `redis/agent-skills` | https://redis.io/llms.txt | Self-hosted cache/queue/rate-limit on Coolify/VDS. |
+| Upstash | `upstash/skills` | https://upstash.com/docs/llms.txt | Serverless Redis / rate-limit / QStash queues. |
+| Trigger.dev | `triggerdotdev/skills` | https://trigger.dev/docs/llms.txt | Default durable background jobs/workflows in TS. |
+| Inngest | — | https://www.inngest.com/llms.txt | Event-driven durable functions (fan-out, step retries). |
+
+### Payments
+
+| Service | Skill | llms.txt | Use for |
+|---|---|---|---|
+| RevenueCat | `revenuecat/ai-toolkit` | https://www.revenuecat.com/docs/llms.txt | Default IAP/subscriptions in Expo (StoreKit + Play Billing). |
+| Stripe | `stripe/ai` | https://docs.stripe.com/llms.txt | Web billing, SaaS subs, marketplaces, checkout, Connect. |
+| Adapty | — | https://adapty.io/docs/llms.txt | RevenueCat alternative with heavy paywall A/B testing. |
+| Superwall | `superwall/skills` | https://superwall.com/docs/llms.txt | Remote-configurable paywall design + A/B testing. |
+| Paddle | — | https://developer.paddle.com/llms.txt | Merchant-of-record for web/desktop SaaS (owns tax/VAT). |
+| Polar | — | https://polar.sh/docs/llms.txt | Developer-first open-source MoR for digital products. |
+
+### Observability
+
+| Service | Skill | llms.txt | Use for |
+|---|---|---|---|
+| Sentry | `getsentry/skills` | https://docs.sentry.io/llms.txt | Default crash/error + performance across mobile and API. |
+| PostHog | `posthog/skills` | https://posthog.com/llms.txt | Default analytics, feature flags, session replay, A/B. |
+| Amplitude | — | https://amplitude.com/docs/llms.txt | Deep behavioural analytics, funnels, retention. |
+| Mixpanel | — | https://docs.mixpanel.com/llms.txt | Event-centric product analytics, ad-hoc reporting. |
+| Aptabase | — | https://aptabase.com/llms.txt | Privacy-first open-source analytics (runs in Expo Go). |
+| Datadog | `datadog-labs/agent-skills` | https://docs.datadoghq.com/llms.txt | Full-stack backend APM, logs, metrics, mobile RUM. |
+| Axiom | `axiomhq/skills` | https://axiom.co/docs/llms.txt | Cheap high-volume log/event storage with APL queries. |
+
+### AI / LLM
+
+| Service | Skill | llms.txt | Use for |
+|---|---|---|---|
+| OpenRouter | `openrouterteam/agent-skills` | https://openrouter.ai/docs/llms.txt | Default gateway: one key to Claude/GPT/Gemini/Llama + fallback. |
+| Vercel AI SDK | `vercel/ai` | https://ai-sdk.dev/llms.txt | Default TS toolkit to wire providers into handlers with streaming. |
+| Anthropic (Claude) | `anthropics/skills` | https://platform.claude.com/llms.txt | Claude directly: reasoning, tool use, prompt caching, long context. |
+| OpenAI | `openai/skills` | https://developers.openai.com/api/docs/llms.txt | GPT models, Realtime/voice, Whisper, image gen. |
+| Google Gemini | — | https://ai.google.dev/gemini-api/docs/llms.txt | Large context, native multimodal, free tier for prototyping. |
+| Groq | — | https://console.groq.com/llms.txt | Very low latency on open models; OpenAI-compatible. |
+| Replicate | — | https://replicate.com/llms.txt | Image/video/audio gen or any community model behind one API. |
+| fal.ai | — | https://fal.ai/docs/llms.txt | Fast image/video/audio generation with streaming/queue. |
+| ElevenLabs | — | https://elevenlabs.io/docs/llms.txt | High-quality TTS, voice cloning, STT, conversational voice. |
+| Mastra | `mastra-ai/skills` | https://mastra.ai/llms.txt | TS agents with tools, workflows, memory, RAG on the backend. |
+| Pinecone | `pinecone-io/skills` | https://docs.pinecone.io/llms.txt | Managed high-scale vector DB with hybrid search (RAG). |
+
+### Mobile state & data-fetching
+
+| Service | Skill | llms.txt | Use for |
+|---|---|---|---|
+| TanStack Query | — | https://tanstack.com/query/latest/llms.txt | Default remote-data: caching, refetch, mutations, offline. |
+| Zustand | — | https://zustand.docs.pmnd.rs/llms.txt | Default client/global state: small store with hooks. |
+| Zod | — | https://zod.dev/llms.txt | Default validation + types; pairs with react-hook-form. |
+| SWR | — | https://swr.vercel.app/llms.txt | Lighter alternative to TanStack Query for read-heavy fetch. |
+
+### Notifications, email, storage
+
+| Service | Skill | llms.txt | Use for |
+|---|---|---|---|
+| Expo Push | `expo/skills` | https://docs.expo.dev/llms.txt | Default push for Expo (single API, Expo push service). |
+| OneSignal | — | https://documentation.onesignal.com/llms.txt | Multichannel campaign/segmentation (push+in-app+email+SMS). |
+| Knock | `knocklabs/skills` | https://docs.knock.app/llms.txt | Notification-as-infra: workflows, preferences, in-app inbox. |
+| Novu | `novuhq/skills` | https://docs.novu.co/llms.txt | Open-source notification infra (self-hostable). |
+| Resend | `resend/resend-skills` | https://resend.com/docs/llms.txt | Default transactional email: clean API, React Email. |
+| Cloudflare R2 | `cloudflare/skills` | https://developers.cloudflare.com/r2/llms.txt | Default object storage: S3-compatible, zero egress. |
 
 ## Routing Rules
 

@@ -4,6 +4,7 @@ This repo is meant to be cloned into new projects as `docs/`.
 
 If this file is copied to the project root, read:
 
+- `docs/stack-picker.md`
 - `docs/rules.md`
 - `docs/stack.md`
 - `docs/workflow.md`

@@ -1,6 +1,8 @@
 # Default Stack
 
-Use this stack unless the user explicitly overrides it.
+Use this stack unless the user explicitly overrides it. For the interactive front
+door — a fast-path default plus 6 questions to pick swaps — start with
+`stack-picker.md`.
 
 ## Product Shape
 
@@ -10,6 +12,8 @@ Use this stack unless the user explicitly overrides it.
 - External services are wrappers around the core product, not the architecture.
 
 ## Stack Matrix
+
+These are the defaults — swap any row via `stack-picker.md`.
 
 | Area | Default | Why |
 | --- | --- | --- |
