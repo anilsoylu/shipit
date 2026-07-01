@@ -16,6 +16,7 @@ Primary instructions:
 - `docs/ai-features.md`
 - `docs/app-store.md`
 - `docs/aso.md`
+- `docs/mobile-libs.md`
 - `docs/skills.md`
 - `docs/ship-checklist.md`
 

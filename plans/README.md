@@ -49,7 +49,7 @@ shared index files (`AGENTS.md`, `CLAUDE.md`, `README.md`, `stack.md`, `rules.md
 | 007 | Observability pluggable: new observability.md (Sentry/PostHog + alternates) | P2 | M | 005 (soft) | DONE |
 | 008 | Expand AI features: contract + gateway/provider/media/agent/vector | P2 | M | 005 (soft), 003 (soft) | DONE |
 | 009 | Data layer pluggable: new data.md (ORM/host/on-device/cache/jobs) | P2 | L | 005 (soft), 003 (soft) | DONE |
-| 010 | mobile-libs.md: curated Expo/RN client library menu | P3 | M | 005 (soft) | TODO |
+| 010 | mobile-libs.md: curated Expo/RN client library menu | P3 | M | 005 (soft) | DONE |
 
 Status values: TODO | IN PROGRESS | DONE | BLOCKED (one-line reason) | REJECTED (one-line rationale)
 

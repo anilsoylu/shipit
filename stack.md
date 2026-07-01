@@ -13,7 +13,9 @@ door — a fast-path default plus 6 questions to pick swaps — start with
 
 ## Stack Matrix
 
-These are the defaults — swap any row via `stack-picker.md`.
+These are the defaults — swap any row via `stack-picker.md`. For client-library
+choices (state, data-fetching, forms, lists, animation, native capability), see
+`mobile-libs.md`.
 
 | Area | Default | Why |
 | --- | --- | --- |

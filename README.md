@@ -30,6 +30,7 @@ stack in seconds.
 - `ai-features.md`: optional backend-only AI provider playbook.
 - `app-store.md`: App Store review and packaging checklist.
 - `aso.md`: ASO, metadata, screenshot, and product page workflow.
+- `mobile-libs.md`: curated Expo/RN client library menu (state, data, forms, lists, animation, native).
 - `skills.md`: required and optional agent skill routing.
 - `ship-checklist.md`: pre-release verification checklist.
 - `AGENTS.md`: Codex bridge file.
