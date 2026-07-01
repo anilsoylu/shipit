@@ -26,8 +26,8 @@ These are the defaults — swap any row via `stack-picker.md`.
 | ORM | Drizzle | Typed schema, migration control, less runtime magic. |
 | Cache | Redis | Rate limits, queues, OTP/session helpers, AI quotas. |
 | Deploy | Coolify | User-owned VDS deployment target. |
-| Crash | Sentry | Mobile and API error visibility. |
-| Analytics | PostHog | Funnels, events, retention, feature usage. |
+| Crash | Sentry (default) | Mobile and API error visibility; swap via observability.md. |
+| Analytics | PostHog (default) | Funnels, events, retention, feature usage; swap via observability.md. |
 | Payments | Stripe or RevenueCat | Depends on product and store rules. |
 | AI | OpenRouter/provider proxy | Optional, server-side only. |
 

@@ -66,6 +66,7 @@ Do not re-litigate these defaults unless the user explicitly overrides one.
 - Read `auth.md` before auth provider, login, session, token, or webhook work.
 - Read `payments.md` before payment work.
 - Read `ai-features.md` before provider/model work.
+- Read `observability.md` before crash/analytics work.
 - Read `app-store.md` before release, review, metadata, screenshots, login/demo account, privacy, or compliance work.
 - Read `aso.md` before title, subtitle, keywords, description, icon, screenshots, previews, localization, or product page work.
 - Read `skills.md` before UI, Expo, React, Postgres, RevenueCat, Clerk, deployment, or ASO work.
@@ -83,7 +84,7 @@ Before claiming done:
 - At least one authenticated happy path works end to end if auth is in scope.
 - Migrations are generated and documented if schema changed.
 - Env vars are listed in `.env.example`, with no real secrets.
-- Sentry and PostHog are wired if the app has reached a testable MVP.
+- Sentry and PostHog (or the chosen observability.md providers) are wired if the app has reached a testable MVP.
 - EAS build path is documented once native dependencies are present.
 - App Store review checklist is complete before store submission.
 - Screenshots and metadata match the submitted build.
