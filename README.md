@@ -16,7 +16,7 @@ Then start the agent with the app idea and tell it to follow `docs/rules.md`.
 ## Files
 
 - `rules.md`: non-negotiable agent rules and default decisions.
-- `workflow.md`: execution order from app brief to release.
+- `workflow.md`: execution order from app brief to release, plus Claude Code orchestration guidance.
 - `stack.md`: default Expo, API, DB, auth, metrics, payment, and AI stack.
 - `backend.md`: backend swap contract, shared DB/Redis/Coolify/security guidance, and playbook router.
 - `backend-<stack>.md`: reference playbooks — fastify (default), hono, go, rust, python.

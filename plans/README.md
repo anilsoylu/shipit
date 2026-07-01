@@ -43,7 +43,7 @@ shared index files (`AGENTS.md`, `CLAUDE.md`, `README.md`, `stack.md`, `rules.md
 | 001 | Expand skills routing + LLM Docs Registry (base) | P2 | M | — | DONE |
 | 002 | Auth pluggable: contract + template + Clerk/better-auth/Supabase/custom | P1 | L | 001 (soft) | DONE |
 | 003 | Backend pluggable: contract + template + Fastify/Hono/Go/Rust/Python | P1 | L | 002 | DONE |
-| 004 | Merge workflow.md + dynamic-workflows into one improved doc | P1 | M | — (soft fwd-link to 005) | TODO |
+| 004 | Merge workflow.md + dynamic-workflows into one improved doc | P1 | M | — (soft fwd-link to 005) | DONE |
 | 005 | stack-picker.md + enrich registry into full multi-domain directory | P1 | L | 001 (hard), 004 (soft) | TODO |
 | 006 | Payments pluggable: contract + RevenueCat/Stripe/situational | P1 | M | 005 (soft), 002/003 | TODO |
 | 007 | Observability pluggable: new observability.md (Sentry/PostHog + alternates) | P2 | M | 005 (soft) | TODO |
