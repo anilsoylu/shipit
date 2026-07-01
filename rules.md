@@ -12,7 +12,7 @@ Ship production-ready Expo apps fast. The user brings the app idea. Your job is 
 - UI: NativeWind plus React Native Reusables.
 - Repo: monorepo with `apps/mobile`, `apps/api`, and optional `packages/*`.
 - API: standalone Fastify TypeScript service.
-- Auth: Clerk for user identity.
+- Auth: Clerk by default; pluggable per auth.md.
 - Data: Postgres with Drizzle migrations.
 - Cache, queues, rate limits: Redis on the user's Coolify/VDS.
 - Hosting: Coolify/VDS for API, Postgres, Redis, and optional workers.
@@ -31,7 +31,7 @@ Do not re-litigate these defaults unless the user explicitly overrides one.
 - Never connect the Expo app directly to Postgres, Redis, Stripe secret keys, OpenRouter keys, or provider API keys.
 - Mobile calls `apps/api`; API talks to infrastructure and external services.
 - Never trust user IDs, prices, credits, limits, entitlements, roles, or ownership values from the mobile client.
-- Verify Clerk auth on the API before protected reads/writes.
+- Verify auth server-side on the API before protected reads/writes (default Clerk; see auth.md).
 - Use Drizzle migrations for schema changes. Do not hand-edit production schema.
 - Add payment and AI modules only when the app actually needs them.
 
@@ -48,6 +48,7 @@ Do not re-litigate these defaults unless the user explicitly overrides one.
 ## Decision Rules
 
 - If the user has not specified backend details, use Fastify, Drizzle, Postgres, Redis, Clerk.
+- If the user has not specified auth, use Clerk. If they request another provider, follow auth.md and its swap contract.
 - If the product has digital in-app subscriptions or digital content consumed in-app, use RevenueCat/IAP first.
 - If the product sells physical goods, appointments, offline services, deposits, or B2B SaaS accessed outside the app, use Stripe through the API.
 - If the product has AI features, use a backend proxy with provider keys in server env only.
@@ -61,6 +62,7 @@ Do not re-litigate these defaults unless the user explicitly overrides one.
 - Read `stack.md` before choosing packages.
 - Read `workflow.md` before implementation.
 - Read `backend.md` before API, DB, auth, Redis, Docker, or Coolify work.
+- Read `auth.md` before auth provider, login, session, token, or webhook work.
 - Read `payments.md` before payment work.
 - Read `ai-features.md` before provider/model work.
 - Read `app-store.md` before release, review, metadata, screenshots, login/demo account, privacy, or compliance work.

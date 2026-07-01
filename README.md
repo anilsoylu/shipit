@@ -19,6 +19,7 @@ Then start the agent with the app idea and tell it to follow `docs/rules.md`.
 - `workflow.md`: execution order from app brief to release.
 - `stack.md`: default Expo, API, DB, auth, metrics, payment, and AI stack.
 - `backend.md`: Fastify, Clerk, Drizzle, Postgres, Redis, Coolify playbook.
+- `auth.md`: auth provider selection, swap contract, and per-provider playbooks (Clerk default, better-auth, Supabase, custom JWT).
 - `payments.md`: Stripe vs RevenueCat decision tree.
 - `ai-features.md`: optional backend-only AI provider playbook.
 - `app-store.md`: App Store review and packaging checklist.

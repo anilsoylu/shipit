@@ -8,6 +8,7 @@ Primary instructions:
 - `docs/stack.md`
 - `docs/workflow.md`
 - `docs/backend.md`
+- `docs/auth.md` (links to `auth-clerk.md`, `auth-betterauth.md`, `auth-supabase.md`, `auth-custom-jwt.md`)
 - `docs/payments.md`
 - `docs/ai-features.md`
 - `docs/app-store.md`

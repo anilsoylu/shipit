@@ -7,7 +7,7 @@ Default backend: standalone Fastify TypeScript API on Coolify/VDS.
 ```txt
 Expo app -> Fastify API -> Postgres
                      -> Redis
-                     -> Clerk backend verification
+                     -> Auth provider verification (default Clerk; see auth.md)
                      -> Stripe, RevenueCat webhooks, AI providers, email, storage
 ```
 
@@ -38,7 +38,7 @@ src/
 Rules:
 
 - `GET /health` must work without auth.
-- Protected routes must verify Clerk session/JWT server-side.
+- Protected routes must verify the auth provider's session/JWT server-side (default Clerk; see `auth.md`).
 - Do not accept `userId` from client input for ownership.
 - Derive actor identity from verified auth context.
 - Validate request bodies before DB writes.
@@ -46,10 +46,15 @@ Rules:
 
 ## Auth
 
-- Clerk owns identity.
-- Mobile uses Clerk Expo SDK.
-- API verifies incoming authenticated requests.
-- API maps Clerk user ID to internal user records when the product needs app-specific profile data.
+Auth is pluggable. Default is Clerk. Pick a provider and follow its playbook;
+every provider must satisfy the Auth Swap Contract. See `auth.md`.
+
+Provider-agnostic API rules (hold regardless of provider):
+
+- The API verifies incoming authenticated requests server-side.
+- Derive actor identity only from the verified token, never from client input.
+- Map the provider user id to internal user records when the product needs
+  app-specific profile data.
 - Webhooks must verify signatures before mutating user records.
 
 ## Database

@@ -16,7 +16,7 @@ Use this stack unless the user explicitly overrides it.
 | Mobile | Expo + Expo Router + TypeScript | Fast native iteration, file-based routes, EAS path. |
 | Styling | NativeWind | Tailwind-speed styling for React Native. |
 | UI kit | React Native Reusables | shadcn-like primitives without inventing every control. |
-| Auth | Clerk | Fast Expo auth and polished session handling. |
+| Auth | Clerk (default) | Fast Expo auth; swappable — see auth.md for better-auth, Supabase, custom JWT. |
 | API | Fastify standalone | Low boilerplate, fast endpoints, good plugin model. |
 | DB | Postgres | Default durable data store on the user's VDS/Coolify. |
 | ORM | Drizzle | Typed schema, migration control, less runtime magic. |
@@ -51,6 +51,7 @@ API secret vars:
 - `REDIS_URL`
 - `CLERK_SECRET_KEY`
 - `CLERK_WEBHOOK_SECRET` when needed
+- Auth env vars are provider-specific; see auth.md for the chosen provider's public vs secret keys.
 - `STRIPE_SECRET_KEY` when Stripe is in scope
 - `STRIPE_WEBHOOK_SECRET` when Stripe is in scope
 - `OPENROUTER_API_KEY` or provider-specific keys when AI is in scope

@@ -55,7 +55,7 @@ API:
 
 - Create Fastify TypeScript service.
 - Add health route.
-- Add Clerk auth middleware.
+- Add auth middleware per auth.md (default Clerk).
 - Add Drizzle, Postgres connection, migrations folder.
 - Add Redis client only when rate limits, queues, sessions, or caching need it.
 - Add Dockerfile and Coolify-ready env list.

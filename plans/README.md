@@ -41,7 +41,7 @@ shared index files (`AGENTS.md`, `CLAUDE.md`, `README.md`, `stack.md`, `rules.md
 | Plan | Title | Priority | Effort | Depends on | Status |
 |------|-------|----------|--------|------------|--------|
 | 001 | Expand skills routing + LLM Docs Registry (base) | P2 | M | — | DONE |
-| 002 | Auth pluggable: contract + template + Clerk/better-auth/Supabase/custom | P1 | L | 001 (soft) | TODO |
+| 002 | Auth pluggable: contract + template + Clerk/better-auth/Supabase/custom | P1 | L | 001 (soft) | DONE |
 | 003 | Backend pluggable: contract + template + Fastify/Hono/Go/Rust/Python | P1 | L | 002 | TODO |
 | 004 | Merge workflow.md + dynamic-workflows into one improved doc | P1 | M | — (soft fwd-link to 005) | TODO |
 | 005 | stack-picker.md + enrich registry into full multi-domain directory | P1 | L | 001 (hard), 004 (soft) | TODO |

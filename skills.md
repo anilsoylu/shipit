@@ -254,6 +254,8 @@ docs linked in the relevant playbook.
 | Service | llms.txt / docs | Use for |
 |---|---|---|
 | Clerk | https://clerk.com/docs/llms-full.txt | Expo SDK patterns, backend request verification, webhooks, auth flows, token handling. |
+| better-auth | https://www.better-auth.com/llms.txt | Self-hosted TS auth: Expo client plugin, JWT/JWKS verification, Drizzle adapter. |
+| Supabase Auth | https://supabase.com/llms.txt | Supabase Auth client, JWT signing keys/JWKS, RN session handling. |
 | Stripe | https://docs.stripe.com/llms.txt | Checkout, payment intents, subscriptions, Connect, webhooks. |
 | Expo | https://docs.expo.dev/llms.txt | Expo SDK, config plugins, EAS, native APIs. |
 | Drizzle | https://orm.drizzle.team/llms.txt | Schema-in-TS, queries, migrations. |
