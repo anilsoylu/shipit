@@ -4,7 +4,7 @@ Use this stack unless the user explicitly overrides it.
 
 ## Product Shape
 
-- Expo mobile app plus Fastify API.
+- Expo mobile app plus a backend API (default Fastify; swappable — see backend.md).
 - Monorepo for speed and shared types.
 - Coolify/VDS owns deployable backend infrastructure.
 - External services are wrappers around the core product, not the architecture.
@@ -17,7 +17,7 @@ Use this stack unless the user explicitly overrides it.
 | Styling | NativeWind | Tailwind-speed styling for React Native. |
 | UI kit | React Native Reusables | shadcn-like primitives without inventing every control. |
 | Auth | Clerk (default) | Fast Expo auth; swappable — see auth.md for better-auth, Supabase, custom JWT. |
-| API | Fastify standalone | Low boilerplate, fast endpoints, good plugin model. |
+| API | Fastify standalone (default) | Low boilerplate, fast; swappable to Hono/Go/Rust/Python — see backend.md. |
 | DB | Postgres | Default durable data store on the user's VDS/Coolify. |
 | ORM | Drizzle | Typed schema, migration control, less runtime magic. |
 | Cache | Redis | Rate limits, queues, OTP/session helpers, AI quotas. |

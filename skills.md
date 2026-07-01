@@ -264,6 +264,10 @@ docs linked in the relevant playbook.
 | PostHog | https://posthog.com/llms.txt | Product analytics, feature flags, session replay. |
 | Sentry | https://docs.sentry.io/llms.txt | Error tracking, performance, SDK setup. |
 | Fastify | https://fastify.dev/llms.txt | Node backend routing, plugins, hooks. |
+| Hono | https://hono.dev/llms.txt | Portable TS API (Node/Bun/edge), JWK middleware, routing. |
+| Go (chi + golang-migrate) | check https://go-chi.io and https://github.com/golang-migrate/migrate docs | Go API router, migrations, pgx/sqlc, JWKS verify. |
+| Rust (axum + sqlx) | check https://docs.rs/axum and https://github.com/launchbadge/sqlx docs | Rust API framework, sqlx migrations, JWT/JWKS. |
+| Python (FastAPI + Alembic) | check https://fastapi.tiangolo.com and https://alembic.sqlalchemy.org docs | FastAPI, SQLAlchemy/Alembic migrations, PyJWT JWKS verify. |
 
 Verified: 2026-07-01
 

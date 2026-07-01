@@ -11,7 +11,7 @@ Ship production-ready Expo apps fast. The user brings the app idea. Your job is 
 - Mobile: Expo, Expo Router, TypeScript.
 - UI: NativeWind plus React Native Reusables.
 - Repo: monorepo with `apps/mobile`, `apps/api`, and optional `packages/*`.
-- API: standalone Fastify TypeScript service.
+- API: standalone backend service; default Fastify TypeScript, pluggable per backend.md.
 - Auth: Clerk by default; pluggable per auth.md.
 - Data: Postgres with Drizzle migrations.
 - Cache, queues, rate limits: Redis on the user's Coolify/VDS.
@@ -47,7 +47,7 @@ Do not re-litigate these defaults unless the user explicitly overrides one.
 
 ## Decision Rules
 
-- If the user has not specified backend details, use Fastify, Drizzle, Postgres, Redis, Clerk.
+- If the user has not specified backend details, use Fastify, Drizzle, Postgres, Redis. If they request another stack, follow backend.md and its swap contract.
 - If the user has not specified auth, use Clerk. If they request another provider, follow auth.md and its swap contract.
 - If the product has digital in-app subscriptions or digital content consumed in-app, use RevenueCat/IAP first.
 - If the product sells physical goods, appointments, offline services, deposits, or B2B SaaS accessed outside the app, use Stripe through the API.
@@ -61,7 +61,7 @@ Do not re-litigate these defaults unless the user explicitly overrides one.
 
 - Read `stack.md` before choosing packages.
 - Read `workflow.md` before implementation.
-- Read `backend.md` before API, DB, auth, Redis, Docker, or Coolify work.
+- Read `backend.md` before API, DB, auth, Redis, Docker, or Coolify work, and pick the matching backend-<stack>.md playbook.
 - Read `auth.md` before auth provider, login, session, token, or webhook work.
 - Read `payments.md` before payment work.
 - Read `ai-features.md` before provider/model work.

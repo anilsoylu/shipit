@@ -7,7 +7,7 @@ Primary instructions:
 - `docs/rules.md`
 - `docs/stack.md`
 - `docs/workflow.md`
-- `docs/backend.md`
+- `docs/backend.md` (links to `backend-fastify.md`, `backend-hono.md`, `backend-go.md`, `backend-rust.md`, `backend-python.md`)
 - `docs/auth.md` (links to `auth-clerk.md`, `auth-betterauth.md`, `auth-supabase.md`, `auth-custom-jwt.md`)
 - `docs/payments.md`
 - `docs/ai-features.md`

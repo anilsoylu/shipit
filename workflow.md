@@ -53,9 +53,12 @@ Mobile:
 
 API:
 
-- Create Fastify TypeScript service.
+- Create the backend service using the chosen playbook from backend.md (default Fastify TypeScript; also hono/go/rust/python).
 - Add health route.
 - Add auth middleware per auth.md (default Clerk).
+
+The bullets below are the Fastify-default specifics; other stacks follow their own playbook:
+
 - Add Drizzle, Postgres connection, migrations folder.
 - Add Redis client only when rate limits, queues, sessions, or caching need it.
 - Add Dockerfile and Coolify-ready env list.

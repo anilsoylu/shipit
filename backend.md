@@ -1,11 +1,13 @@
 # Backend Playbook
 
-Default backend: standalone Fastify TypeScript API on Coolify/VDS.
+Default backend is standalone Fastify TypeScript on Coolify/VDS. The backend is
+pluggable — pick a stack, then follow its playbook. Whatever you pick must
+satisfy the Backend Swap Contract below.
 
 ## Architecture
 
 ```txt
-Expo app -> Fastify API -> Postgres
+Expo app -> Backend API -> Postgres
                      -> Redis
                      -> Auth provider verification (default Clerk; see auth.md)
                      -> Stripe, RevenueCat webhooks, AI providers, email, storage
@@ -13,36 +15,39 @@ Expo app -> Fastify API -> Postgres
 
 The Expo app never talks directly to databases, Redis, private payment APIs, or model providers.
 
-## API Shape
+## Choosing a backend
 
-Recommended `apps/api` layout:
+- **Fastify** (TS, default): low boilerplate, richest plugin ecosystem, fast.
+- **Hono** (TS): portable across Node/Bun/edge runtimes; pairs with better-auth.
+- **Go**: performance, single binary, strong concurrency.
+- **Rust**: maximum performance and safety.
+- **Python/FastAPI**: Python ecosystem, ML-adjacent work.
 
-```txt
-src/
-  index.ts
-  env.ts
-  server.ts
-  plugins/
-    auth.ts
-    db.ts
-    redis.ts
-  routes/
-    health.ts
-    me.ts
-    webhooks.ts
-  db/
-    schema.ts
-    migrations/
-```
+## Backend Swap Contract
 
-Rules:
+Every backend, in any language, must satisfy these:
 
-- `GET /health` must work without auth.
-- Protected routes must verify the auth provider's session/JWT server-side (default Clerk; see `auth.md`).
-- Do not accept `userId` from client input for ownership.
-- Derive actor identity from verified auth context.
-- Validate request bodies before DB writes.
-- Return typed DTOs, not raw DB rows when fields are sensitive.
+1. `GET /health` responds without auth.
+2. Protected routes verify the auth token **server-side on every request**, per
+   the Auth Swap Contract in `auth.md` (JWKS / provider SDK / introspection).
+3. Never accept `userId`, ownership, price, credits, entitlement, or role from
+   client input; derive identity from the verified token, other trusted values
+   from server config or DB.
+4. Validate request bodies/params before any DB write.
+5. Return typed DTOs, not raw DB rows, when fields are sensitive.
+6. Schema changes go through committed migrations, run before production deploy;
+   use transactions for multi-table writes; index foreign keys, lookup fields,
+   and uniqueness constraints.
+7. Webhooks verify the provider signature before mutating state; store the raw
+   body when signature verification needs it.
+8. Secrets (DB URL, Redis URL, provider keys, webhook secrets) live in server
+   env only, never in the Expo bundle.
+9. Deployable on Coolify/VDS: a Dockerfile (or Coolify-supported build), the
+   `/health` route, an explicit env var list, a documented migration command,
+   and logs visible in Coolify.
+10. HTTPS in production; CORS scoped to known clients (not `*`); rate limits
+    before expensive public endpoints; never log tokens, cookies, payment
+    secrets, provider keys, or full auth headers.
 
 ## Auth
 
@@ -57,16 +62,21 @@ Provider-agnostic API rules (hold regardless of provider):
   app-specific profile data.
 - Webhooks must verify signatures before mutating user records.
 
-## Database
+## Shared guidance
 
-- Use Drizzle schema as source of truth.
+Language-agnostic. Each playbook names the concrete tool (Drizzle vs sqlc vs
+SQLAlchemy, etc.).
+
+### Database
+
+- Use the ORM/schema as the source of truth.
 - Generate migrations for every schema change.
 - Keep migrations committed.
 - Run migrations before production deployment.
 - Use transactions for multi-table writes.
 - Prefer explicit indexes on foreign keys, lookup fields, and uniqueness constraints.
 
-## Redis
+### Redis
 
 Use Redis for:
 
@@ -78,7 +88,7 @@ Use Redis for:
 
 Do not use Redis as the source of truth for durable product data.
 
-## Coolify Deploy
+### Coolify Deploy
 
 API deploy requirements:
 
@@ -99,7 +109,7 @@ Deployment order:
 6. Smoke test one protected endpoint.
 7. Point Expo app env to deployed API URL.
 
-## Security Defaults
+### Security Defaults
 
 - Use HTTPS for public API.
 - Set CORS to the expected clients, not `*`, once domains are known.
@@ -107,10 +117,58 @@ Deployment order:
 - Store webhook raw body when required for signature verification.
 - Add rate limits before public expensive endpoints.
 
+## Add a new backend
+
+Copy this skeleton into `backend-<stack>.md` and fill it in:
+
+```markdown
+# Backend Playbook: <Stack>
+
+Use <Stack> when: <selection criteria>.
+
+## Project layout
+- Directory/module structure (equivalent to the Fastify project layout).
+
+## Libraries
+- HTTP framework, DB access/ORM, migration tool, validation, Redis client.
+
+## Auth verification
+- How this stack verifies the token per auth.md's Auth Swap Contract
+  (e.g. JWKS validation library, provider SDK).
+
+## Database & migrations
+- ORM/driver and the exact migration command (goes in the deploy runbook).
+
+## Health, webhooks, security
+- Health route, webhook signature verification, CORS/rate-limit approach.
+
+## Coolify deploy
+- Dockerfile notes specific to this stack; build/run commands; env list.
+
+## Env vars
+- Secret vs public.
+
+## Contract compliance
+- Restate the 10 Backend Swap Contract invariants; confirm each is met.
+
+## Official References
+- Framework, ORM, migration, and JWKS-verify docs + llms.txt (from the registry).
+```
+
+To support a stack not listed, copy the skeleton into `backend-<stack>.md`,
+satisfy every contract invariant, add its rows to the LLM Docs Registry in
+`skills.md`, and link it from this file and the index files.
+
+## Backend playbooks
+
+- `backend-fastify.md` — Fastify + Drizzle (TS, default).
+- `backend-hono.md` — Hono + Drizzle (TS, portable/edge).
+- `backend-go.md` — chi + pgx/sqlc + golang-migrate.
+- `backend-rust.md` — axum + sqlx.
+- `backend-python.md` — FastAPI + SQLAlchemy/Alembic.
+
 ## Official References
 
-- Fastify docs: https://fastify.dev/docs/latest/
-- Clerk backend requests: https://clerk.com/docs/backend-requests/overview
 - Drizzle PostgreSQL: https://orm.drizzle.team/docs/get-started/postgresql-new
 - Drizzle migrations: https://orm.drizzle.team/docs/migrations
 - Coolify docs: https://coolify.io/docs
