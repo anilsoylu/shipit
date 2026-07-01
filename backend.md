@@ -69,6 +69,9 @@ SQLAlchemy, etc.).
 
 ### Database
 
+For ORM, managed-host, on-device, and background-job options, see `data.md`; the
+rules below are server-side and provider-agnostic.
+
 - Use the ORM/schema as the source of truth.
 - Generate migrations for every schema change.
 - Keep migrations committed.

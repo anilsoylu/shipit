@@ -23,6 +23,7 @@ stack in seconds.
 - `stack.md`: default Expo, API, DB, auth, metrics, payment, and AI stack.
 - `backend.md`: backend swap contract, shared DB/Redis/Coolify/security guidance, and playbook router.
 - `backend-<stack>.md`: reference playbooks — fastify (default), hono, go, rust, python.
+- `data.md`: data swap contract + ORM/DB-host/on-device/cache/jobs option menu.
 - `auth.md`: auth provider selection, swap contract, and per-provider playbooks (Clerk default, better-auth, Supabase, custom JWT).
 - `payments.md`: payments swap contract, RevenueCat/Stripe playbooks, situational providers.
 - `observability.md`: crash + analytics swap contract, Sentry/PostHog playbooks, alternates.

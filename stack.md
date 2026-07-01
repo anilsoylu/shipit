@@ -22,8 +22,8 @@ These are the defaults — swap any row via `stack-picker.md`.
 | UI kit | React Native Reusables | shadcn-like primitives without inventing every control. |
 | Auth | Clerk (default) | Fast Expo auth; swappable — see auth.md for better-auth, Supabase, custom JWT. |
 | API | Fastify standalone (default) | Low boilerplate, fast; swappable to Hono/Go/Rust/Python — see backend.md. |
-| DB | Postgres | Default durable data store on the user's VDS/Coolify. |
-| ORM | Drizzle | Typed schema, migration control, less runtime magic. |
+| DB | Postgres (default) | Default durable data store on the user's VDS/Coolify; host/swap via data.md. |
+| ORM | Drizzle (default) | Typed schema, migration control; swap to Prisma/Kysely via data.md. |
 | Cache | Redis | Rate limits, queues, OTP/session helpers, AI quotas. |
 | Deploy | Coolify | User-owned VDS deployment target. |
 | Crash | Sentry (default) | Mobile and API error visibility; swap via observability.md. |

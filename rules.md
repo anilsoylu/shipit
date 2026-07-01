@@ -67,6 +67,7 @@ Do not re-litigate these defaults unless the user explicitly overrides one.
 - Read `payments.md` before payment work.
 - Read `ai-features.md` before provider/model work.
 - Read `observability.md` before crash/analytics work.
+- Read `data.md` before ORM, DB-host, on-device/offline, cache, or background-job choices.
 - Read `app-store.md` before release, review, metadata, screenshots, login/demo account, privacy, or compliance work.
 - Read `aso.md` before title, subtitle, keywords, description, icon, screenshots, previews, localization, or product page work.
 - Read `skills.md` before UI, Expo, React, Postgres, RevenueCat, Clerk, deployment, or ASO work.
