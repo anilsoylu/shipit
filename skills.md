@@ -223,13 +223,47 @@ Use `rc-claude-code-plugin` for dashboard/API setup flows:
 
 Use RevenueCat skills only when IAP, subscriptions, entitlements, paywalls, or RevenueCat analytics are in scope.
 
-## Clerk Docs
+## Stripe Skills
 
-Before implementing Clerk auth, use the official LLM docs:
+Install the Stripe skill pack as needed:
 
-- https://clerk.com/docs/llms-full.txt
+```sh
+npx skills add stripe/ai --skill stripe-best-practices
+```
 
-Use this for current Expo SDK patterns, backend request verification, webhooks, auth flows, and token handling.
+The `stripe/ai` pack ships these skills:
+
+- `stripe-best-practices`
+- `upgrade-stripe`
+- `stripe-projects`
+- `stripe-directory`
+- `connect-recommend`
+
+If the Stripe MCP is available in the environment, use it for Stripe API exploration and documentation search (`search_stripe_documentation`, `stripe_api_read`).
+
+Use Stripe skills only when server-driven Stripe work is in scope: checkout, payment intents, subscriptions, Connect, or webhooks (see `payments.md`).
+
+## LLM Docs Registry
+
+When integrating any external service, first look for its `llms.txt` or
+`llms-full.txt` (usually at `<docs-domain>/llms.txt`) and its official
+agent skill on https://www.skills.sh/. Prefer these over training-data
+recall — they reflect the current SDK. If neither exists, use the official
+docs linked in the relevant playbook.
+
+| Service | llms.txt / docs | Use for |
+|---|---|---|
+| Clerk | https://clerk.com/docs/llms-full.txt | Expo SDK patterns, backend request verification, webhooks, auth flows, token handling. |
+| Stripe | https://docs.stripe.com/llms.txt | Checkout, payment intents, subscriptions, Connect, webhooks. |
+| Expo | https://docs.expo.dev/llms.txt | Expo SDK, config plugins, EAS, native APIs. |
+| Drizzle | https://orm.drizzle.team/llms.txt | Schema-in-TS, queries, migrations. |
+| NativeWind | https://www.nativewind.dev/llms.txt | Tailwind styling for React Native / Expo. |
+| RevenueCat | https://www.revenuecat.com/docs/llms.txt | IAP, subscriptions, entitlements, paywalls. |
+| PostHog | https://posthog.com/llms.txt | Product analytics, feature flags, session replay. |
+| Sentry | https://docs.sentry.io/llms.txt | Error tracking, performance, SDK setup. |
+| Fastify | https://fastify.dev/llms.txt | Node backend routing, plugins, hooks. |
+
+Verified: 2026-07-01
 
 ## Routing Rules
 
@@ -246,6 +280,8 @@ Use this for current Expo SDK patterns, backend request verification, webhooks, 
 - Native SDKs: use `expo-dev-client`.
 - Release: use `expo-deployment`, then `expo-cicd-workflows` if automation is needed.
 - IAP/subscriptions: use `payments.md`, RevenueCat docs, and RevenueCat MCP if available.
+- Stripe (web/server billing): use `stripe/ai` skills and `payments.md`; use the Stripe MCP for API exploration if available.
+- New/unfamiliar integration: check its `llms.txt` and skills.sh entry first (see LLM Docs Registry).
 
 ## skills.sh References
 
@@ -255,6 +291,7 @@ Use this for current Expo SDK patterns, backend request verification, webhooks, 
 - Supabase skills directory: https://www.skills.sh/supabase/agent-skills
 - Redis skills directory: https://www.skills.sh/redis/agent-skills
 - RevenueCat directory: https://www.skills.sh/revenuecat
+- Stripe directory: https://www.skills.sh/stripe
 - Expo Tailwind: https://www.skills.sh/expo/skills/expo-tailwind-setup
 - Expo CI/CD: https://www.skills.sh/expo/skills/expo-cicd-workflows
 - Expo deployment: https://www.skills.sh/expo/skills/expo-deployment
