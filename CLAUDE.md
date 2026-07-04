@@ -15,6 +15,7 @@ Primary instructions:
 - `docs/observability.md`
 - `docs/ai-features.md`
 - `docs/app-store.md`
+- `docs/app-store-submission-runbook.md`
 - `docs/aso.md`
 - `docs/mobile-libs.md`
 - `docs/skills.md`
