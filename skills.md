@@ -6,6 +6,7 @@ Goal: make agents use the right specialized skill before touching important subs
 
 Use these when available:
 
+- `verify-change`: end-to-end verification of any change before calling it done; defers to a project `verify-*` skill when one exists. After the first vertical slice, encode its recipe as a project `verify-<domain>` skill.
 - `postgresql-database-engineering`: schema design, indexes, migrations, query performance, backups, production Postgres.
 - `nextjs-app-router-patterns`: App Router structure, server/client component boundaries, layouts, route handlers.
 - `nextjs-data-fetching`: RSC data fetching, caching, revalidation, server actions.
@@ -420,6 +421,7 @@ Verified 2026-07-07 (llms.txt URLs curl-checked 200; Tailwind has none).
 - Release: use `expo-deployment`, then `expo-cicd-workflows` if automation is needed.
 - IAP/subscriptions: use `payments.md`, RevenueCat docs, and RevenueCat MCP if available.
 - Stripe (web/server billing): use `stripe/ai` skills and `payments.md`; use the Stripe MCP for API exploration if available.
+- Before claiming done: run `verify-change`; it defers to the repo's `.claude/skills/verify-*` skill when one exists.
 - New/unfamiliar integration: check its `llms.txt` and skills.sh entry first (see LLM Docs Registry).
 
 ## skills.sh References

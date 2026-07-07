@@ -23,7 +23,7 @@ Read once, then apply per phase. Every capability below is a real Claude Code fe
   - `/goal`: tasks with verifiable exit criteria. Give a deterministic condition and a turn cap ("all typechecks pass, stop after 5 tries") so an evaluator, not vibes, decides done.
   - `/loop` (local interval) and `/schedule` (cloud routine): recurring work or polling external systems (CI status, PR reviews, report queues). Match the interval to how often the watched thing changes.
   - Proactive: compose `/schedule` + `/goal` + workflows + auto mode for recurring streams (issue triage, dependency bumps) with no human in the loop.
-- Verification skills: encode your manual "is it right?" checks as a SKILL.md with quantitative checks (tests pass, route responds, Lighthouse score) so the agent self-verifies instead of burning your review time.
+- Verification skills: encode your manual "is it right?" checks as a SKILL.md with quantitative checks (tests pass, route responds, Lighthouse score) so the agent self-verifies instead of burning your review time. Start from the global `verify-change` skill; it defers to a project `verify-*` skill when one exists.
 - Second-agent review: before merging a slice, run `/code-review` or a reviewer subagent with fresh context — it is not biased by the builder's reasoning.
 - Token discipline: pilot a workflow on a small slice before a large run; use scripts for deterministic steps instead of re-reasoning them; review `/usage` to see where tokens go.
 
@@ -216,7 +216,7 @@ A task is done only when:
 - Known gaps are listed plainly.
 - Next ship step is obvious.
 
-Verify, do not assume. Diff behavior against the plan from step 2. For high-stakes correctness, let a workflow give independent attempts with adversarial agents trying to break the result before you accept it.
+Verify, do not assume. Run the global `verify-change` skill before claiming done — it discovers the project's own checks and defers to a project `verify-*` skill when one exists. Once the first vertical slice works end to end, encode its verification recipe as `.claude/skills/verify-<domain>/SKILL.md` in the project (tests, local start, smoke script, quantitative pass criteria) so every later change self-verifies. Diff behavior against the plan from step 2. For high-stakes correctness, let a workflow give independent attempts with adversarial agents trying to break the result before you accept it.
 
 ## Choosing tools and loading their docs
 
