@@ -43,7 +43,7 @@ Every payment integration must satisfy these:
    state; store the raw body when signature verification needs it.
 4. Product/price IDs come from server config or DB, not mobile input.
 5. Secrets (provider secret keys, webhook secrets) live in server env only;
-   only publishable/public keys ship in the Expo bundle.
+   only publishable/public keys ship in client bundles (Expo or web).
 6. If backend access is gated by entitlement, the check is server-side.
 
 Additional store-review guardrails (hold at all times):
@@ -105,20 +105,22 @@ References: skill `revenuecat/ai-toolkit`; llms.txt https://www.revenuecat.com/d
 Stripe must be server-driven:
 
 - API creates customers, ephemeral keys, payment intents, setup intents, checkout sessions, subscriptions, and portal sessions.
-- Expo app uses publishable key plus server-created client secrets only.
+- Clients use the publishable key plus server-created client secrets only.
 - Webhooks verify Stripe signature before changing DB state.
-- Prices and product IDs come from server config or DB, not mobile input.
-- Mobile never sends final amount, currency, entitlement, or role as trusted data.
+- Prices and product IDs come from server config or DB, not client input.
+- Clients never send final amount, currency, entitlement, or role as trusted data.
+- For web SaaS, default to Stripe Checkout + the customer portal before
+  building custom billing UI.
 
 Typical flow:
 
-1. Mobile asks API to start checkout.
+1. Client (mobile or web) asks API to start checkout.
 2. API verifies the authenticated user (see `auth.md`).
 3. API creates Stripe object.
-4. Mobile presents Stripe UI or opens checkout.
+4. Client presents Stripe UI or opens checkout.
 5. Stripe sends webhook.
 6. API verifies webhook and updates entitlement/order.
-7. Mobile refreshes server entitlement.
+7. Client refreshes server entitlement.
 
 Contract compliance: web/physical only, never in-app digital (1);
 server-created intents, no trusted client amounts (2, 4); webhook signature

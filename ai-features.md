@@ -19,8 +19,9 @@ Do not add chat UI by default. Many apps need a button, form, result card, or ba
 
 Every AI integration must satisfy these:
 
-1. Provider API keys live in server env ONLY (`apps/api`); never in the Expo
-   bundle. The mobile app calls your API, never a provider directly.
+1. Provider API keys live in server env ONLY (`apps/api`, or Next.js server
+   env for the web-only shape); never in a client bundle. Clients call your
+   API, never a provider directly.
 2. Every AI endpoint verifies the user, then checks plan/credits/quota and a
    Redis rate limit before calling the provider.
 3. Validate input length/type and cap max input; enforce request timeouts.
@@ -45,7 +46,7 @@ Server responsibilities:
 - Call provider.
 - Store only the product-relevant result.
 - Log cost metadata without sensitive prompt data unless explicitly needed.
-- Return typed output to mobile.
+- Return typed output to the client.
 
 ## Provider Strategy
 

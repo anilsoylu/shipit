@@ -7,6 +7,11 @@ Goal: make agents use the right specialized skill before touching important subs
 Use these when available:
 
 - `postgresql-database-engineering`: schema design, indexes, migrations, query performance, backups, production Postgres.
+- `nextjs-app-router-patterns`: App Router structure, server/client component boundaries, layouts, route handlers.
+- `nextjs-data-fetching`: RSC data fetching, caching, revalidation, server actions.
+- `nextjs-performance`: Next.js bundle, rendering, and Core Web Vitals optimization.
+- `seo-audit` / `seo-geo`: web SEO passes — metadata, sitemap, structured data, geo/AI-search visibility.
+- `web-design-guidelines`: web UI quality guardrails.
 - `vercel-composition-patterns`: reusable React component APIs, compound components, context interfaces, avoiding boolean prop sprawl.
 - `vercel-react-best-practices`: React performance, waterfalls, bundle size, rerenders, data fetching.
 - `frontend-design`: distinctive production UI, non-generic visual direction.
@@ -259,6 +264,23 @@ cadence and refresh the date stamp above.
 Skill column = `npx skills add <slug>`. `—` = no authoritative vendor pack; use
 the llms.txt.
 
+### Web core (Next.js / TanStack)
+
+Verified 2026-07-07 (llms.txt URLs curl-checked 200; Tailwind has none).
+
+| Service | Skill | llms.txt | Use for |
+|---|---|---|---|
+| Next.js | — (use installed `nextjs-*` skills) | https://nextjs.org/docs/llms.txt | Default web framework: App Router, RSC, route handlers, ISR. |
+| TanStack Start | — | https://tanstack.com/start/latest/llms.txt | Client-heavy web apps with type-safe routing/loaders (swap). |
+| TanStack Router | — | https://tanstack.com/router/latest/llms.txt | Standalone type-safe SPA routing. |
+| TanStack Virtual | — | https://tanstack.com/virtual/latest/llms.txt | Web list virtualization (FlashList's web counterpart). |
+| Tailwind CSS | — | check https://tailwindcss.com/docs (no llms.txt) | Web utility styling; same vocabulary as NativeWind. |
+| shadcn/ui | — | https://ui.shadcn.com/llms.txt | Default web UI primitives (RNR's web counterpart). |
+| Coolify | — | https://coolify.io/docs/llms-full.txt | Default deploy for web + API + Postgres + Redis on the user's Hetzner VDS. |
+| Vercel | — | https://vercel.com/docs/llms.txt | Web deploy swap: previews per PR, edge/serverless. |
+| Motion (framer-motion) | — | https://motion.dev/llms.txt | Web animation (Reanimated's web counterpart). |
+| nuqs | — | https://nuqs.dev/llms.txt | Type-safe URL query state for Next.js/React. |
+
 ### Mobile core (Expo / RN)
 
 | Service | Skill | llms.txt | Use for |
@@ -389,6 +411,9 @@ the llms.txt.
 - Postgres performance: also use `supabase-postgres-best-practices`.
 - Redis: use `redis-best-practices` before production cache, rate limit, queue, or AI quota work.
 - Clerk Expo auth: use `clerk`, `clerk-expo`, and `clerk-expo-patterns`.
+- Clerk web auth: use `clerk`, `clerk-nextjs-patterns` (or `clerk-tanstack-patterns`).
+- Next.js work: use `nextjs-app-router-patterns`, then `nextjs-data-fetching`; `nextjs-performance` before optimization passes.
+- Web SEO: use `seo-audit` (and `seo-geo` for AI-search visibility) before public web launches.
 - Expo styling: use `expo-tailwind-setup`.
 - Expo API calls: use `native-data-fetching`.
 - Native SDKs: use `expo-dev-client`.

@@ -1,6 +1,6 @@
-# Expo Ship Workflow
+# Ship Workflow (Mobile + Web)
 
-Use this after the user has chosen the app idea. Do not spend time discovering apps unless explicitly asked.
+Use this after the user has chosen the app idea. Do not spend time discovering apps unless explicitly asked. Steps apply to every platform in scope; mobile-only steps (EAS, stores) and web-only steps (SEO, Vercel) are marked.
 
 This doc has two layers:
 - WHAT to build and in what order (the ship workflow, phases 1-7).
@@ -18,12 +18,20 @@ Read once, then apply per phase. Every capability below is a real Claude Code fe
 - Checkpoints: rely on file checkpointing to roll back a bad slice cleanly instead of hand-reverting.
 - Hooks: wire typecheck/lint/format to run automatically on stop or edit so the done-definition stays enforced without you asking.
 - MCP: prefer provider MCP servers when they exist and are in scope (e.g. RevenueCat, Stripe) over hand-rolled API calls.
+- Loops: an agent repeating work until a stop condition. Pick the cheapest one that fits:
+  - Turn-based (a normal prompt): short one-off tasks. Reduce turns with specific prompts and verification skills.
+  - `/goal`: tasks with verifiable exit criteria. Give a deterministic condition and a turn cap ("all typechecks pass, stop after 5 tries") so an evaluator, not vibes, decides done.
+  - `/loop` (local interval) and `/schedule` (cloud routine): recurring work or polling external systems (CI status, PR reviews, report queues). Match the interval to how often the watched thing changes.
+  - Proactive: compose `/schedule` + `/goal` + workflows + auto mode for recurring streams (issue triage, dependency bumps) with no human in the loop.
+- Verification skills: encode your manual "is it right?" checks as a SKILL.md with quantitative checks (tests pass, route responds, Lighthouse score) so the agent self-verifies instead of burning your review time.
+- Second-agent review: before merging a slice, run `/code-review` or a reviewer subagent with fresh context — it is not biased by the builder's reasoning.
+- Token discipline: pilot a workflow on a small slice before a large run; use scripts for deterministic steps instead of re-reasoning them; review `/usage` to see where tokens go.
 
 When to escalate: a single agent handles one slice. Reach for a dynamic workflow only for codebase-wide passes (security/perf audit, dead-code hunt, a migration touching many files, or a plan you want stress-tested from every angle). Building one MVP slice does NOT need a workflow.
 
 ## 0. Lock The Stack
 
-Before scaffolding, run `stack-picker.md`: accept the default Expo Ship Stack or answer its 6 questions to choose swaps. Confirm the filled Stack Matrix and install the chosen skills. This makes the stack decision once, up front, instead of mid-build churn.
+Before scaffolding, run `stack-picker.md`: accept the default Expo/Web Ship Stack or answer its 7 questions (platforms first) to choose swaps. Confirm the filled Stack Matrix and install the chosen skills. This makes the stack decision once, up front, instead of mid-build churn.
 
 ## 1. Intake
 
@@ -63,8 +71,9 @@ Default structure:
 
 ```txt
 apps/
-  mobile/
-  api/
+  mobile/   # if mobile in scope
+  web/      # if web in scope
+  api/      # skip only for web-only fullstack shape (web.md)
 packages/
   config/
   types/
@@ -78,6 +87,14 @@ Mobile:
 - Add `.env.example` with only public Expo vars prefixed as required.
 - Add app scheme for auth callbacks and deep links.
 
+Web (see `web.md`):
+
+- Create Next.js app with TypeScript, App Router, Tailwind; add shadcn/ui.
+- Server components by default; `"use client"` only at interactive leaves.
+- Add `.env.example` separating `NEXT_PUBLIC_*` from server-only vars.
+- Decide the product shape first: web as a client of `apps/api` (default when
+  mobile is in scope) vs Next.js fullstack (web-only).
+
 API:
 
 - Create the backend service from the chosen playbook in `backend.md` (default Fastify TypeScript; Hono/Go/Rust/Python are valid swaps).
@@ -88,9 +105,9 @@ API:
 - Add Dockerfile and Coolify-ready env list.
 
 Orchestration:
-- Load the relevant setup skills first (e.g. `expo/skills` expo-dev-client + expo-deployment, your chosen auth/db skill).
-- Run `mobile` and `api` scaffolds as parallel subagents; they are independent.
-- Start Expo and the API as background tasks and keep them alive across the build.
+- Load the relevant setup skills first (e.g. `expo/skills` expo-dev-client + expo-deployment, `nextjs-*` skills for web, your chosen auth/db skill).
+- Run `mobile`, `web`, and `api` scaffolds as parallel subagents; they are independent.
+- Start the dev servers (Expo, Next.js, API) as background tasks and keep them alive across the build.
 
 Follow the default stack unless the user overrides it. `stack-picker.md` and the LLM Docs Registry in `skills.md` list every verified per-domain option with its agent skill and llms.txt so a swap stays smooth.
 
@@ -107,7 +124,8 @@ Build in this order:
 7. Loading, empty, error, and success states.
 8. PostHog events for the core loop.
 9. Sentry capture around app/API failures.
-10. App Store packaging notes if the slice affects screenshots, onboarding, pricing, or review.
+10. (mobile) App Store packaging notes if the slice affects screenshots, onboarding, pricing, or review.
+11. (web) SEO metadata on any public page the slice adds (see `web.md`).
 
 Stop broadening scope until the first slice works end to end.
 
@@ -137,7 +155,13 @@ Push, email, maps, storage:
 - Add only after the core loop needs them.
 - Keep credentials server-side unless the provider requires public client keys.
 
-ASO and App Store packaging:
+SEO and web launch prep (web):
+
+- Follow the SEO essentials section in `web.md`: metadata, sitemap, robots,
+  OG images, canonical URLs, Core Web Vitals pass.
+- Use the `seo-audit` / `seo-geo` skills when SEO is a growth channel.
+
+ASO and App Store packaging (mobile):
 
 - Read `app-store.md` and `aso.md`.
 - Prepare metadata before screenshots.
@@ -154,9 +178,14 @@ Orchestration:
 For local MVP:
 
 - Run typecheck.
-- Run mobile start.
-- Run API start.
-- Smoke test the core route on iOS or Android.
+- Start every in-scope app (mobile, web, API).
+- Smoke test the core route on iOS or Android, and in the browser for web.
+
+For web distribution (see `web.md`):
+
+- Deploy to your Coolify/VDS (default) or Vercel (swap).
+- Smoke test the core path on the deployed URL before sharing with testers.
+- Complete the SEO essentials in `web.md` before the public launch.
 
 For native modules:
 
@@ -179,9 +208,9 @@ Orchestration:
 
 A task is done only when:
 
-- The main user path works on device or simulator.
+- The main user path works on device/simulator (mobile) and in the browser (web), for every platform in scope.
 - Auth, API, DB, and payments/AI are wired only where needed.
-- Secrets are not exposed in mobile code.
+- Secrets are not exposed in client code (Expo bundle or web client).
 - Env vars are documented.
 - Typecheck passes.
 - Known gaps are listed plainly.
@@ -199,6 +228,8 @@ drifts against this doc.
 ## Official References
 
 - Expo create project: https://docs.expo.dev/get-started/create-a-project/
+- Next.js installation: https://nextjs.org/docs/app/getting-started/installation
+- TanStack Start: https://tanstack.com/start/latest
 - Expo Router: https://docs.expo.dev/router/introduction/
 - Development builds: https://docs.expo.dev/develop/development-builds/introduction/
 - EAS Build: https://docs.expo.dev/build/introduction/

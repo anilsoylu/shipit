@@ -1,14 +1,17 @@
 # Default Stack
 
 Use this stack unless the user explicitly overrides it. For the interactive front
-door — a fast-path default plus 6 questions to pick swaps — start with
+door — a fast-path default plus 7 questions to pick swaps — start with
 `stack-picker.md`.
 
 ## Product Shape
 
-- Expo mobile app plus a backend API (default Fastify; swappable — see backend.md).
+- Expo mobile app and/or Next.js web app plus a backend API (default Fastify;
+  swappable — see backend.md). Web-only products may run Next.js fullstack —
+  see the product-shape rules in `web.md`.
 - Monorepo for speed and shared types.
-- Coolify/VDS owns deployable backend infrastructure.
+- Coolify/VDS (Hetzner) owns deployable infrastructure: API, Postgres, Redis,
+  and the web frontend. Vercel is the web-deploy swap (`web.md`).
 - External services are wrappers around the core product, not the architecture.
 
 ## Stack Matrix
@@ -20,8 +23,9 @@ choices (state, data-fetching, forms, lists, animation, native capability), see
 | Area | Default | Why |
 | --- | --- | --- |
 | Mobile | Expo + Expo Router + TypeScript | Fast native iteration, file-based routes, EAS path. |
-| Styling | NativeWind | Tailwind-speed styling for React Native. |
-| UI kit | React Native Reusables | shadcn-like primitives without inventing every control. |
+| Web | Next.js (App Router) + TypeScript | RSC/ISR for SEO, largest ecosystem; TanStack Start swap via web.md. |
+| Styling | NativeWind (mobile) / Tailwind CSS (web) | Same utility vocabulary on both platforms. |
+| UI kit | React Native Reusables (mobile) / shadcn/ui (web) | shadcn-like primitives without inventing every control. |
 | Auth | Clerk (default) | Fast Expo auth; swappable — see auth.md for better-auth, Supabase, custom JWT. |
 | API | Fastify standalone (default) | Low boilerplate, fast; swappable to Hono/Go/Rust/Python — see backend.md. |
 | DB | Postgres (default) | Default durable data store on the user's VDS/Coolify; host/swap via data.md. |
@@ -36,10 +40,11 @@ choices (state, data-fetching, forms, lists, animation, native capability), see
 ## Package Rules
 
 - Put mobile-only code in `apps/mobile`.
+- Put web-only code in `apps/web`.
 - Put server-only code in `apps/api`.
 - Put shared runtime-safe types in `packages/types`.
-- Do not import server code into mobile.
-- Do not import mobile code into API.
+- Do not import server code into mobile or into web client components.
+- Do not import client code into API.
 - Shared packages must not contain secrets or server clients.
 
 ## Environment Rules
@@ -50,6 +55,12 @@ Mobile public vars:
 - Clerk publishable key is public.
 - API base URL can be public.
 - Never expose secret keys, DB URLs, Redis URLs, webhook secrets, provider keys, or Stripe secret keys.
+
+Web public vars:
+
+- Use `NEXT_PUBLIC_` naming only for browser-safe values (API base URL,
+  publishable keys, analytics keys). Everything else is server-only env —
+  never imported into client components. See `web.md`.
 
 API secret vars:
 
@@ -77,6 +88,9 @@ Add integrations only when the product needs them:
 ## Official References
 
 - Expo docs: https://docs.expo.dev/
+- Next.js docs: https://nextjs.org/docs
+- Tailwind CSS: https://tailwindcss.com/docs
+- shadcn/ui: https://ui.shadcn.com/docs
 - NativeWind: https://www.nativewind.dev/docs/getting-started/installation
 - React Native Reusables: https://rnr-docs.vercel.app/
 - Clerk Expo: https://clerk.com/docs/quickstarts/expo

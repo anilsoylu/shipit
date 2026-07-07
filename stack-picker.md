@@ -7,17 +7,33 @@ writing code.
 
 ## Fast path (recommended)
 
-Accept every default and you get the **Expo Ship Stack**:
+Accept every default and you get the **Expo Ship Stack** (mobile):
 
 > Expo + Expo Router + TypeScript, NativeWind + React Native Reusables, Clerk
-> auth, Fastify TypeScript API on Coolify/VDS, Postgres + Drizzle (Neon or your
-> VDS), Redis, RevenueCat (in-app subs) / Stripe (web), Sentry + PostHog,
-> OpenRouter + Vercel AI SDK for any AI.
+> auth, Fastify TypeScript API on Coolify/VDS, Postgres + Drizzle on your
+> Coolify/VDS (Neon swap), Redis on the same box, RevenueCat (in-app subs) /
+> Stripe (web), Sentry + PostHog, OpenRouter + Vercel AI SDK for any AI.
 
-If that fits, tell the agent "use the default Expo Ship Stack" and skip to
-Scaffold in `workflow.md`. Otherwise answer the 6 questions.
+For web, the **Web Ship Stack** shares everything below the frontend:
 
-## The 6 questions
+> Next.js (App Router) + TypeScript, Tailwind CSS + shadcn/ui, deployed on
+> your Coolify/VDS next to the API/Postgres/Redis (Vercel swap); same
+> auth/backend/data/payments/observability/AI defaults as above. TanStack
+> Start is the supported framework swap (`web.md`).
+
+If that fits, tell the agent "use the default Expo Ship Stack" and/or "use the
+default Web Ship Stack" and skip to Scaffold in `workflow.md`. Otherwise answer
+the 7 questions.
+
+## The 7 questions
+
+**0. Which platforms?**
+- Mobile (iOS/Android) → Expo. `mobile-libs.md`, `app-store.md`, `aso.md` apply.
+- Web → **Next.js App Router** (default) or **TanStack Start** (client-heavy
+  apps, type-safe routing). See `web.md`; SEO section replaces `aso.md`.
+- Both → Expo + Next.js sharing one `apps/api` and `packages/types`.
+- Web-only and small → Next.js fullstack (route handlers as backend) is
+  allowed; see the product-shape rules in `web.md`.
 
 **1. What are you charging for?**
 - Nothing yet / free → skip payments.
@@ -40,8 +56,8 @@ Scaffold in `workflow.md`. Otherwise answer the 6 questions.
 
 **4. Where does data live?**
 - ORM → **Drizzle** (default) or Prisma.
-- Managed Postgres host → **Neon** (default, serverless) or **Supabase** (BaaS);
-  or your own Coolify/VDS Postgres.
+- Postgres host → **your Coolify/VDS Postgres** (default, Hetzner); **Neon**
+  (serverless) or **Supabase** (BaaS) as swaps.
 - On-device / offline? None (server-only, default) → skip; local cache →
   **Expo SQLite**; offline-first sync → **WatermelonDB** or **PowerSync**.
 - Need cache/jobs? → **Redis** (self-host) or **Upstash** (serverless);
@@ -66,11 +82,14 @@ Scaffold in `workflow.md`. Otherwise answer the 6 questions.
 | Area | Choice | Swap |
 | --- | --- | --- |
 | Mobile | Expo + Expo Router + TS | bare RN only if forced |
-| Styling/UI | NativeWind + React Native Reusables | Tamagui, Gluestack |
+| Web | Next.js App Router + TS | TanStack Start (`web.md`) |
+| Styling/UI (mobile) | NativeWind + React Native Reusables | Tamagui, Gluestack |
+| Styling/UI (web) | Tailwind CSS + shadcn/ui | Tamagui universal (`web.md`) |
+| Web deploy | Coolify/VDS | Vercel (`web.md`) |
 | Auth | Clerk | better-auth, Supabase, custom JWT (`auth.md`) |
 | Backend | Fastify TS | Hono, Go, Rust, Python (`backend.md`) |
 | ORM | Drizzle | Prisma (`data.md`) |
-| DB host | Neon / VDS Postgres | Supabase, Turso (`data.md`) |
+| DB host | Coolify/VDS Postgres | Neon, Supabase, Turso (`data.md`) |
 | On-device | none / Expo SQLite | WatermelonDB, PowerSync (`data.md`) |
 | Cache/jobs | Redis / Upstash | Trigger.dev, QStash (`data.md`) |
 | Payments | RevenueCat / Stripe | Adapty, Superwall, Paddle (`payments.md`) |
@@ -90,6 +109,12 @@ For every non-default choice, the agent must load that option's skill and
 | --- | --- | --- |
 | Expo | `expo/skills` | https://docs.expo.dev/llms-full.txt |
 | NativeWind | `expo/skills` (expo-tailwind-setup) | https://www.nativewind.dev/llms.txt |
+| Next.js | — (use installed `nextjs-*` skills) | https://nextjs.org/docs/llms.txt |
+| TanStack Start | — | https://tanstack.com/start/latest/llms.txt |
+| shadcn/ui | — | https://ui.shadcn.com/llms.txt |
+| Tailwind CSS | — | check https://tailwindcss.com/docs (no llms.txt) |
+| Vercel | — | https://vercel.com/docs/llms.txt |
+| Coolify | — | https://coolify.io/docs/llms-full.txt |
 | Clerk | `clerk/skills` | https://clerk.com/llms.txt |
 | better-auth | `better-auth/skills` | https://www.better-auth.com/llms.txt |
 | Supabase | `supabase/agent-skills` | https://supabase.com/llms.txt |

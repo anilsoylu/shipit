@@ -1,6 +1,7 @@
-# Expo Ship Docs Pack
+# Ship Docs Pack
 
-Reusable agent instructions for building Expo apps fast.
+Reusable agent instructions for building mobile (Expo) and web (Next.js /
+TanStack Start) products fast.
 
 ## Install Into A New Project
 
@@ -17,10 +18,11 @@ stack in seconds.
 
 ## Files
 
-- `stack-picker.md`: interactive front door — fast-path default + 6 questions to pick swaps.
+- `stack-picker.md`: interactive front door — fast-path defaults + 7 questions (platforms first) to pick swaps.
 - `rules.md`: non-negotiable agent rules and default decisions.
 - `workflow.md`: execution order from app brief to release, plus Claude Code orchestration guidance.
-- `stack.md`: default Expo, API, DB, auth, metrics, payment, and AI stack.
+- `stack.md`: default mobile, web, API, DB, auth, metrics, payment, and AI stack.
+- `web.md`: web frontend playbook — Next.js default, TanStack Start swap, SEO essentials, web deploy.
 - `backend.md`: backend swap contract, shared DB/Redis/Coolify/security guidance, and playbook router.
 - `backend-<stack>.md`: reference playbooks — fastify (default), hono, go, rust, python.
 - `data.md`: data swap contract + ORM/DB-host/on-device/cache/jobs option menu.

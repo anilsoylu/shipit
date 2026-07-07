@@ -4,18 +4,19 @@ Use this file as the highest-priority project instruction after the user's promp
 
 ## Mission
 
-Ship production-ready Expo apps fast. The user brings the app idea. Your job is to turn it into a working mobile product with the default stack, minimal debate, and verified builds.
+Ship production-ready mobile (Expo) and web (Next.js) products fast. The user brings the app idea. Your job is to turn it into a working product on the platforms in scope with the default stack, minimal debate, and verified builds.
 
 ## Defaults
 
 - Mobile: Expo, Expo Router, TypeScript.
-- UI: NativeWind plus React Native Reusables.
-- Repo: monorepo with `apps/mobile`, `apps/api`, and optional `packages/*`.
+- Web: Next.js App Router, TypeScript; TanStack Start swap per web.md.
+- UI: NativeWind plus React Native Reusables (mobile); Tailwind CSS plus shadcn/ui (web).
+- Repo: monorepo with `apps/mobile` and/or `apps/web`, `apps/api`, and optional `packages/*`.
 - API: standalone backend service; default Fastify TypeScript, pluggable per backend.md.
 - Auth: Clerk by default; pluggable per auth.md.
 - Data: Postgres with Drizzle migrations.
 - Cache, queues, rate limits: Redis on the user's Coolify/VDS.
-- Hosting: Coolify/VDS for API, Postgres, Redis, and optional workers.
+- Hosting: Coolify/VDS (Hetzner) for the web app, API, Postgres, Redis, and optional workers. Vercel only as an explicit web swap.
 - Metrics: Sentry for crashes, PostHog for product analytics.
 - Payments: decision tree in `payments.md`.
 - AI features: optional backend-only provider proxy in `ai-features.md`.
@@ -27,10 +28,10 @@ Do not re-litigate these defaults unless the user explicitly overrides one.
 
 ## Hard Boundaries
 
-- Never put server secrets in the Expo client.
-- Never connect the Expo app directly to Postgres, Redis, Stripe secret keys, OpenRouter keys, or provider API keys.
-- Mobile calls `apps/api`; API talks to infrastructure and external services.
-- Never trust user IDs, prices, credits, limits, entitlements, roles, or ownership values from the mobile client.
+- Never put server secrets in the Expo client or the web client bundle (`NEXT_PUBLIC_*`, client components).
+- Never connect the Expo app or web client code directly to Postgres, Redis, Stripe secret keys, OpenRouter keys, or provider API keys.
+- Clients call `apps/api`; API talks to infrastructure and external services. Web-only exception: Next.js server-side code may be the backend per web.md, under the same contract.
+- Never trust user IDs, prices, credits, limits, entitlements, roles, or ownership values from any client.
 - Verify auth server-side on the API before protected reads/writes (default Clerk; see auth.md).
 - Use Drizzle migrations for schema changes. Do not hand-edit production schema.
 - Add payment and AI modules only when the app actually needs them.
@@ -48,6 +49,8 @@ Do not re-litigate these defaults unless the user explicitly overrides one.
 ## Decision Rules
 
 - If the user has not specified the stack, run stack-picker.md and take its defaults.
+- If platforms are unspecified, ask; if unanswered, infer from the product (store-distributed → mobile, SEO/dashboard/SaaS → web) and state the assumption.
+- If the product is web-only and small, Next.js fullstack (route handlers as backend) is allowed per web.md; keep a standalone API when mobile is or will be in scope.
 - If the user has not specified backend details, use Fastify, Drizzle, Postgres, Redis. If they request another stack, follow backend.md and its swap contract.
 - If the user has not specified auth, use Clerk. If they request another provider, follow auth.md and its swap contract.
 - If the product has digital in-app subscriptions or digital content consumed in-app, use RevenueCat/IAP first.
@@ -62,6 +65,7 @@ Do not re-litigate these defaults unless the user explicitly overrides one.
 
 - Read `stack.md` before choosing packages.
 - Read `workflow.md` before implementation.
+- Read `web.md` before Next.js/TanStack Start, web UI, SEO, or web deployment work.
 - Read `backend.md` before API, DB, auth, Redis, Docker, or Coolify work, and pick the matching backend-<stack>.md playbook.
 - Read `auth.md` before auth provider, login, session, token, or webhook work.
 - Read `payments.md` before payment work.
@@ -79,9 +83,9 @@ Do not re-litigate these defaults unless the user explicitly overrides one.
 Before claiming done:
 
 - Typecheck passes.
-- Mobile starts locally.
-- API starts locally.
+- Every in-scope app starts locally (mobile, web, API).
 - Protected API routes reject unauthenticated requests.
+- Web public pages have SEO metadata if web is in scope (see web.md).
 - At least one authenticated happy path works end to end if auth is in scope.
 - Migrations are generated and documented if schema changed.
 - Env vars are listed in `.env.example`, with no real secrets.
@@ -94,6 +98,8 @@ Before claiming done:
 ## Official References
 
 - Expo docs: https://docs.expo.dev/
+- Next.js docs: https://nextjs.org/docs
+- shadcn/ui: https://ui.shadcn.com/docs
 - Expo Router: https://docs.expo.dev/router/introduction/
 - EAS Build: https://docs.expo.dev/build/introduction/
 - EAS Submit: https://docs.expo.dev/submit/introduction/

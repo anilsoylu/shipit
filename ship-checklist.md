@@ -1,6 +1,7 @@
 # Ship Checklist
 
-Use this before calling an Expo app ready for testing or release.
+Use this before calling an app ready for testing or release. Mobile, Web, and
+store sections apply only when that platform is in scope.
 
 ## Before Coding
 
@@ -15,8 +16,7 @@ Use this before calling an Expo app ready for testing or release.
 ## Repo
 
 - Monorepo structure exists.
-- `apps/mobile` starts.
-- `apps/api` starts.
+- Every in-scope app starts (`apps/mobile`, `apps/web`, `apps/api`).
 - Shared types do not import server-only code.
 - `.env.example` files exist.
 - No real secrets are committed.
@@ -29,6 +29,20 @@ Use this before calling an Expo app ready for testing or release.
 - Auth gate works if auth is in scope.
 - API base URL is environment-driven.
 - No server secrets are present in mobile env or code.
+
+## Web
+
+See `web.md` for the contract behind these items.
+
+- Routes match the intended pages.
+- Server components by default; `"use client"` only where interactive.
+- UI has loading, empty, error, and success states.
+- Auth gate works if auth is in scope; sessions are httpOnly cookies, no tokens in localStorage.
+- No server secrets in `NEXT_PUBLIC_*` vars or client components.
+- Public pages have unique title/description metadata.
+- `sitemap.xml`, `robots.txt`, and OG images exist before public launch.
+- Lighthouse pass on landing and top pages shows no glaring Core Web Vitals problem.
+- Deploy target (Coolify/VDS default; Vercel swap) is configured with the env list.
 
 ## API
 

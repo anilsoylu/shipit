@@ -18,9 +18,10 @@ playbook. Whatever you pick must satisfy the Auth Swap Contract below.
 
 Every provider must satisfy these invariants:
 
-1. The Expo client obtains a session/token from the provider's client SDK and
-   stores tokens only in secure storage (`expo-secure-store`), never
-   AsyncStorage or plaintext.
+1. Clients obtain a session/token from the provider's client SDK. Mobile stores
+   tokens only in secure storage (`expo-secure-store`), never AsyncStorage or
+   plaintext. Web uses the provider's httpOnly cookie session handling; tokens
+   never go to `localStorage`.
 2. Every protected API request carries the provider's bearer token or session.
 3. The API verifies the token **server-side on every protected request** — via
    the provider's JWKS (for JWTs), the provider's server SDK verifier, or a
@@ -31,8 +32,8 @@ Every provider must satisfy these invariants:
    idempotent upsert when app-specific profile data is needed.
 6. Auth webhooks (user created/updated/deleted, session events) verify the
    provider's signature before mutating user records.
-7. Only publishable/public keys ship in the Expo bundle. Secret keys, JWKS
-   signing secrets, and webhook secrets stay in API server env only.
+7. Only publishable/public keys ship in client bundles (Expo or web). Secret
+   keys, JWKS signing secrets, and webhook secrets stay in server env only.
 8. `GET /health` never requires auth.
 
 ## Add a new provider
@@ -50,6 +51,11 @@ Use <Provider> when: <one or two selection criteria>.
 - Sign-up / sign-in / sign-out flow.
 - How the client retrieves the token for API calls.
 - Secure token storage (expo-secure-store).
+
+## Client (Web) — when web is in scope
+- Package(s) for the web framework (e.g. Next.js SDK/middleware).
+- Session handling (httpOnly cookies) and how server components/route
+  handlers read the session.
 
 ## Server verification
 - How the API validates the token (JWKS URL / server SDK / introspection).

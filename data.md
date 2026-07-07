@@ -1,7 +1,7 @@
 # Data Layer Playbook
 
-Default data layer is Postgres + Drizzle, on a managed host (Neon) or your
-Coolify/VDS Postgres. The data layer is pluggable — whatever you pick must
+Default data layer is Postgres + Drizzle on your Coolify/VDS Postgres
+(Hetzner); Neon is the managed-host swap. The data layer is pluggable — whatever you pick must
 satisfy the swap contract below.
 
 For server-side Database and Redis **rules**, see `backend.md`'s Database and
@@ -11,8 +11,8 @@ on-device, cache, jobs). It links those rules, it does not restate them.
 ## Choosing ORM + DB host + on-device store
 
 - **ORM** → **Drizzle** (default) or Prisma; Kysely for raw-SQL builders.
-- **Managed Postgres host** → **Neon** (default, serverless/branching) or your
-  own Coolify/VDS Postgres; Supabase for Postgres+BaaS; Turso for edge SQLite;
+- **Postgres host** → **your Coolify/VDS Postgres** (default); **Neon** for
+  serverless/branching; Supabase for Postgres+BaaS; Turso for edge SQLite;
   PlanetScale for scalable MySQL/Postgres.
 - **On-device / offline** → none (server-only, default); **Expo SQLite** for a
   local cache; WatermelonDB/PowerSync for offline-first sync.
@@ -26,7 +26,8 @@ Every data-layer choice must satisfy these:
 1. Schema changes go through committed migrations, run before production deploy.
 2. Index foreign keys, lookup fields, and uniqueness constraints; use
    transactions for multi-table writes.
-3. DB/Redis secrets live in server env only; never in the Expo bundle.
+3. DB/Redis secrets live in server env only; never in the Expo bundle or web
+   client bundle.
 4. On-device secrets go in `expo-secure-store`, never in an on-device DB or MMKV.
 5. The on-device DB is a cache/offline copy; the server DB is the source of
    truth. Reconcile via sync, don't trust device state for authorization.
@@ -65,8 +66,9 @@ Registry in `skills.md`.
 
 ### Managed Postgres / DB host
 
-- **Neon** (default) — serverless Postgres with branching. Skill `neondatabase/agent-skills`; llms.txt https://neon.com/llms.txt
-- **VDS Postgres** — your own Postgres on Coolify/VDS (default self-host).
+- **VDS Postgres** (default) — your own Postgres on Coolify/VDS (Hetzner).
+  Coolify llms-full.txt https://coolify.io/docs/llms-full.txt
+- **Neon** (swap) — serverless Postgres with branching. Skill `neondatabase/agent-skills`; llms.txt https://neon.com/llms.txt
 - **Supabase** — Postgres + auth + storage + realtime. Skill `supabase/agent-skills`; llms.txt https://supabase.com/llms.txt
 - **Turso / libSQL** — SQLite at the edge or synced. llms.txt https://docs.turso.tech/llms.txt
 - **PlanetScale** — scalable MySQL (Vitess) or managed Postgres. Skill `planetscale/database-skills`; llms.txt https://planetscale.com/llms.txt

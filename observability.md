@@ -6,8 +6,8 @@ Swap Contract below.
 
 ## Choosing crash + analytics
 
-- **Crashes/errors** → **Sentry** (default). Full-stack across mobile and API.
-- **Product analytics** → **PostHog** (default). Events, funnels, flags, replay.
+- **Crashes/errors** → **Sentry** (default). Full-stack across mobile, web, and API (Expo and Next.js SDKs).
+- **Product analytics** → **PostHog** (default). Events, funnels, flags, replay; RN and web/Next.js SDKs.
 - In the Google ecosystem → **Firebase** (Crashlytics + Analytics).
 - Deep behavioural analytics → **Amplitude** or **Mixpanel**.
 - Privacy-first / open-source, runs in Expo Go → **Aptabase** or **OpenPanel**.

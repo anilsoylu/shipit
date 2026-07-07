@@ -7,13 +7,14 @@ satisfy the Backend Swap Contract below.
 ## Architecture
 
 ```txt
-Expo app -> Backend API -> Postgres
-                     -> Redis
+Expo app  \
+           -> Backend API -> Postgres
+Web app   /          -> Redis
                      -> Auth provider verification (default Clerk; see auth.md)
                      -> Stripe, RevenueCat webhooks, AI providers, email, storage
 ```
 
-The Expo app never talks directly to databases, Redis, private payment APIs, or model providers.
+Clients (Expo app, web client code) never talk directly to databases, Redis, private payment APIs, or model providers. Web-only exception: for the web-only fullstack shape in `web.md`, Next.js server-side code IS the backend and must satisfy this contract like any other stack.
 
 ## Choosing a backend
 
@@ -41,7 +42,7 @@ Every backend, in any language, must satisfy these:
 7. Webhooks verify the provider signature before mutating state; store the raw
    body when signature verification needs it.
 8. Secrets (DB URL, Redis URL, provider keys, webhook secrets) live in server
-   env only, never in the Expo bundle.
+   env only, never in the Expo bundle or web client bundle.
 9. Deployable on Coolify/VDS: a Dockerfile (or Coolify-supported build), the
    `/health` route, an explicit env var list, a documented migration command,
    and logs visible in Coolify.
@@ -110,7 +111,7 @@ Deployment order:
 4. Deploy API.
 5. Smoke test `/health`.
 6. Smoke test one protected endpoint.
-7. Point Expo app env to deployed API URL.
+7. Point client env (Expo app, web app) to the deployed API URL.
 
 ### Security Defaults
 
