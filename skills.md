@@ -422,6 +422,7 @@ Verified 2026-07-07 (llms.txt URLs curl-checked 200; Tailwind has none).
 - IAP/subscriptions: use `payments.md`, RevenueCat docs, and RevenueCat MCP if available.
 - Stripe (web/server billing): use `stripe/ai` skills and `payments.md`; use the Stripe MCP for API exploration if available.
 - Before claiming done: run `verify-change`; it defers to the repo's `.claude/skills/verify-*` skill when one exists.
+- Security: read `security.md` before auth/payments/uploads/AI work or a security review; it is self-contained — the checks are inlined, no external skill required.
 - New/unfamiliar integration: check its `llms.txt` and skills.sh entry first (see LLM Docs Registry).
 
 ## skills.sh References

@@ -78,6 +78,19 @@ See `web.md` for the contract behind these items.
 - Core loop events are captured.
 - Errors do not log secrets or full tokens.
 
+## Security
+
+See `security.md` for the full playbook and the review method.
+
+- Threat-model done for any feature touching auth, money, PII, uploads, or AI.
+- Access control: every query is tenant/owner-scoped; create and update enforce the same authz; no client-supplied identity/role/price is trusted.
+- Inputs validated at every boundary (Zod); queries parameterized.
+- Webhooks verify signatures against the raw body; entitlements reconciled with the provider.
+- AI routes: keys server-only, model output treated as untrusted, per-user rate/cost limits.
+- Secrets: none committed (rotate if any ever were); no debug/metrics/pprof exposed in prod.
+- Logs scrubbed of tokens, cookies, and PII; prod errors don't leak internals.
+- Security review pass completed (disprove-first; severity = likelihood × impact).
+
 ## Build
 
 - Typecheck passes.

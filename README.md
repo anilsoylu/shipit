@@ -27,6 +27,7 @@ stack in seconds.
 - `backend/<stack>.md`: reference playbooks — fastify (default), hono, go, rust, python.
 - `data.md`: data swap contract + ORM/DB-host/on-device/cache/jobs option menu.
 - `auth.md`: auth provider selection, swap contract, and per-provider playbooks (Clerk default, better-auth, Supabase, custom JWT).
+- `security.md`: pre-build threat-model, trust boundaries, stack-specific hardening beyond the swap contracts, and the pre-ship security review pass.
 - `payments.md`: payments swap contract, RevenueCat/Stripe playbooks, situational providers.
 - `observability.md`: crash + analytics swap contract, Sentry/PostHog playbooks, alternates.
 - `ai-features.md`: optional backend-only AI provider playbook.
