@@ -2,7 +2,7 @@
 
 Use Hono when: you want a TypeScript API that stays portable across Node, Bun,
 and edge runtimes (Cloudflare Workers, Deno, Lambda). Pairs naturally with
-better-auth (TS) from `auth.md`.
+better-auth (TS) from `../auth.md`.
 
 ## Project layout
 
@@ -31,7 +31,7 @@ src/
 
 ## Auth verification
 
-- Verify the token per `auth.md`'s Auth Swap Contract.
+- Verify the token per `../auth.md`'s Auth Swap Contract.
 - Hono ships a native `jwk` middleware that fetches the provider's `jwks_uri`,
   matches by `kid`, rejects HS\* algorithms, and validates `exp`/`nbf`/`iat` — no
   extra library needed for JWKS-based providers.

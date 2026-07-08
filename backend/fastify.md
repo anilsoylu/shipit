@@ -35,11 +35,11 @@ src/
 
 ## Auth verification
 
-- Default provider is Clerk; verify per `auth.md`'s Auth Swap Contract.
+- Default provider is Clerk; verify per `../auth.md`'s Auth Swap Contract.
 - Shape: an `auth.ts` plugin reads the bearer token, verifies it via Clerk's
   backend SDK / JWKS, and decorates the request with the verified `userId`.
 - Swapping provider (better-auth, Supabase, custom JWT) only changes this plugin;
-  see the matching `auth-*.md`.
+  see the matching `../auth/*.md`.
 
 ## Database & migrations
 
@@ -64,7 +64,7 @@ src/
 
 - Public (bundle-safe): none server-side — the API base URL lives in the Expo app.
 - Secret (server only): `DATABASE_URL`, `REDIS_URL`, auth provider secrets (see
-  `auth.md`), plus any Stripe/RevenueCat/AI keys in scope.
+  `../auth.md`), plus any Stripe/RevenueCat/AI keys in scope.
 
 ## Contract compliance
 

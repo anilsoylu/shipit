@@ -66,7 +66,7 @@ Do not re-litigate these defaults unless the user explicitly overrides one.
 - Read `stack.md` before choosing packages.
 - Read `workflow.md` before implementation.
 - Read `web.md` before Next.js/TanStack Start, web UI, SEO, or web deployment work.
-- Read `backend.md` before API, DB, auth, Redis, Docker, or Coolify work, and pick the matching backend-<stack>.md playbook.
+- Read `backend.md` before API, DB, auth, Redis, Docker, or Coolify work, and pick the matching backend/<stack>.md playbook.
 - Read `auth.md` before auth provider, login, session, token, or webhook work.
 - Read `payments.md` before payment work.
 - Read `ai-features.md` before provider/model work.

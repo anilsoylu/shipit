@@ -21,7 +21,7 @@ handling and minimal server code. This is the default.
   request via Clerk's backend SDK (or its JWKS). Never trust an unverified token.
 - Shape: an auth middleware/plugin that reads the bearer token, verifies it, and
   attaches the verified `userId` to the request context. Describe it
-  framework-agnostically; the Fastify wiring lives in `backend.md`.
+  framework-agnostically; the Fastify wiring lives in `../backend.md`.
 
 ## User mapping
 
@@ -56,4 +56,4 @@ handling and minimal server code. This is the default.
 - Clerk LLM docs: https://clerk.com/docs/llms-full.txt
 - Clerk Expo quickstart: https://clerk.com/docs/quickstarts/expo
 - Clerk backend requests: https://clerk.com/docs/backend-requests/overview
-- Clerk skills: `clerk`, `clerk-expo`, `clerk-expo-patterns` (see `skills.md`).
+- Clerk skills: `clerk`, `clerk-expo`, `clerk-expo-patterns` (see `../skills.md`).

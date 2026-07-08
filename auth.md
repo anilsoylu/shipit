@@ -6,13 +6,13 @@ playbook. Whatever you pick must satisfy the Auth Swap Contract below.
 ## Choosing a provider
 
 - **Clerk** (default): fastest Expo auth, hosted, polished session handling. Use
-  unless the user requires otherwise. See `auth-clerk.md`.
+  unless the user requires otherwise. See `auth/clerk.md`.
 - **better-auth**: self-hosted, own your data, runs in the TS API process. Pairs
-  with the Fastify default / Hono option. See `auth-betterauth.md`.
+  with the Fastify default / Hono option. See `auth/betterauth.md`.
 - **Supabase Auth**: already using Supabase, or want Postgres-native auth. See
-  `auth-supabase.md`.
+  `auth/supabase.md`.
 - **Custom JWT**: full control, you own all security. Discouraged unless a hard
-  requirement forces it. See `auth-custom-jwt.md`.
+  requirement forces it. See `auth/custom-jwt.md`.
 
 ## Auth Swap Contract
 
@@ -38,7 +38,7 @@ Every provider must satisfy these invariants:
 
 ## Add a new provider
 
-Copy this skeleton into `auth-<provider>.md` and fill it in:
+Copy this skeleton into `auth/<provider>.md` and fill it in:
 
 ```markdown
 # Auth Playbook: <Provider>
@@ -79,12 +79,12 @@ Use <Provider> when: <one or two selection criteria>.
 ```
 
 To support a provider not listed here, copy the skeleton into
-`auth-<provider>.md`, satisfy every contract invariant, add its row to the LLM
+`auth/<provider>.md`, satisfy every contract invariant, add its row to the LLM
 Docs Registry in `skills.md`, and link it from this file and the index files.
 
 ## Provider playbooks
 
-- `auth-clerk.md` — Clerk (default).
-- `auth-betterauth.md` — better-auth (self-hosted TS).
-- `auth-supabase.md` — Supabase Auth.
-- `auth-custom-jwt.md` — custom JWT (you own security).
+- `auth/clerk.md` — Clerk (default).
+- `auth/betterauth.md` — better-auth (self-hosted TS).
+- `auth/supabase.md` — Supabase Auth.
+- `auth/custom-jwt.md` — custom JWT (you own security).

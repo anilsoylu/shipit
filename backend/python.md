@@ -29,7 +29,7 @@ Dockerfile
 
 ## Auth verification
 
-- Verify the token per `auth.md`'s Auth Swap Contract via JWKS.
+- Verify the token per `../auth.md`'s Auth Swap Contract via JWKS.
 - Use **PyJWT** with `PyJWKClient`:
   `jwks_client = PyJWKClient(jwks_url)`, then
   `signing_key = jwks_client.get_signing_key_from_jwt(token)`, then

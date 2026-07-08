@@ -123,7 +123,7 @@ Deployment order:
 
 ## Add a new backend
 
-Copy this skeleton into `backend-<stack>.md` and fill it in:
+Copy this skeleton into `backend/<stack>.md` and fill it in:
 
 ```markdown
 # Backend Playbook: <Stack>
@@ -159,17 +159,17 @@ Use <Stack> when: <selection criteria>.
 - Framework, ORM, migration, and JWKS-verify docs + llms.txt (from the registry).
 ```
 
-To support a stack not listed, copy the skeleton into `backend-<stack>.md`,
+To support a stack not listed, copy the skeleton into `backend/<stack>.md`,
 satisfy every contract invariant, add its rows to the LLM Docs Registry in
 `skills.md`, and link it from this file and the index files.
 
 ## Backend playbooks
 
-- `backend-fastify.md` — Fastify + Drizzle (TS, default).
-- `backend-hono.md` — Hono + Drizzle (TS, portable/edge).
-- `backend-go.md` — chi + pgx/sqlc + golang-migrate.
-- `backend-rust.md` — axum + sqlx.
-- `backend-python.md` — FastAPI + SQLAlchemy/Alembic.
+- `backend/fastify.md` — Fastify + Drizzle (TS, default).
+- `backend/hono.md` — Hono + Drizzle (TS, portable/edge).
+- `backend/go.md` — chi + pgx/sqlc + golang-migrate.
+- `backend/rust.md` — axum + sqlx.
+- `backend/python.md` — FastAPI + SQLAlchemy/Alembic.
 
 ## Official References
 

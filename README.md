@@ -8,8 +8,8 @@ TanStack Start) products fast.
 ```sh
 git clone --depth 1 https://github.com/anilsoylu/shipit.git docs
 rm -rf docs/.git
-cp docs/AGENTS.md AGENTS.md
-cp docs/CLAUDE.md CLAUDE.md
+mv docs/AGENTS.md AGENTS.md
+mv docs/CLAUDE.md CLAUDE.md
 ```
 
 Then start the agent with the app idea and tell it to follow `docs/rules.md`.
@@ -24,7 +24,7 @@ stack in seconds.
 - `stack.md`: default mobile, web, API, DB, auth, metrics, payment, and AI stack.
 - `web.md`: web frontend playbook — Next.js default, TanStack Start swap, SEO essentials, web deploy.
 - `backend.md`: backend swap contract, shared DB/Redis/Coolify/security guidance, and playbook router.
-- `backend-<stack>.md`: reference playbooks — fastify (default), hono, go, rust, python.
+- `backend/<stack>.md`: reference playbooks — fastify (default), hono, go, rust, python.
 - `data.md`: data swap contract + ORM/DB-host/on-device/cache/jobs option menu.
 - `auth.md`: auth provider selection, swap contract, and per-provider playbooks (Clerk default, better-auth, Supabase, custom JWT).
 - `payments.md`: payments swap contract, RevenueCat/Stripe playbooks, situational providers.

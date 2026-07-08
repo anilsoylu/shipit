@@ -26,7 +26,7 @@ Dockerfile
 
 ## Auth verification
 
-- Verify the token per `auth.md`'s Auth Swap Contract via JWKS.
+- Verify the token per `../auth.md`'s Auth Swap Contract via JWKS.
 - Use the `jsonwebtoken` crate: fetch the provider JWKS, select the key by `kid`,
   build a `DecodingKey::from_jwk`, and `decode` with a `Validation` that checks
   `iss`/`aud`/`exp`. JWKS fetch + cache is done in an axum middleware/extractor.

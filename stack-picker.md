@@ -52,7 +52,7 @@ the 7 questions.
 **3. What language is the backend?**
 - TypeScript, richest ecosystem → **Fastify** (default).
 - TS but edge/portable runtimes → **Hono**.
-- Go / Rust / Python(FastAPI) → matching `backend-<stack>.md`. See `backend.md`.
+- Go / Rust / Python(FastAPI) → matching `backend/<stack>.md`. See `backend.md`.
 
 **4. Where does data live?**
 - ORM → **Drizzle** (default) or Prisma.

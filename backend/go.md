@@ -28,7 +28,7 @@ Dockerfile
 
 ## Auth verification
 
-- Verify the token per `auth.md`'s Auth Swap Contract via JWKS.
+- Verify the token per `../auth.md`'s Auth Swap Contract via JWKS.
 - Use a maintained JWKS library: `github.com/MicahParks/keyfunc/v3` (builds a
   `jwt.Keyfunc` for golang-jwt) or `github.com/lestrrat-go/jwx/v4` (jwk package).
 - Middleware fetches the provider JWKS, matches the `kid`, verifies signature +

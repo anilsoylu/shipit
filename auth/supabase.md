@@ -89,4 +89,4 @@ verifies the JWT itself.
 - Supabase LLM docs: https://supabase.com/llms.txt
 - React Native auth quickstart: https://supabase.com/docs/guides/auth/quickstarts/react-native
 - JWT signing keys / JWKS: https://supabase.com/docs/guides/auth/signing-keys
-- Supabase skills: `supabase` (see `skills.md`).
+- Supabase skills: `supabase` (see `../skills.md`).
