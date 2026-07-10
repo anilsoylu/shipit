@@ -100,6 +100,8 @@ key ships in the app (5). ✓
 
 References: skill `revenuecat/ai-toolkit`; llms.txt https://www.revenuecat.com/docs/llms.txt
 
+If the paywall stays empty / "Plans are loading" (no packages in the offering, StoreKit returns no products), see `storekit-paywall-debug.md` for the diagnosis order.
+
 ### Stripe (default web)
 
 Stripe must be server-driven:

@@ -29,6 +29,7 @@ stack in seconds.
 - `auth.md`: auth provider selection, swap contract, and per-provider playbooks (Clerk default, better-auth, Supabase, custom JWT).
 - `security.md`: pre-build threat-model, trust boundaries, stack-specific hardening beyond the swap contracts, and the pre-ship security review pass.
 - `payments.md`: payments swap contract, RevenueCat/Stripe playbooks, situational providers.
+- `storekit-paywall-debug.md`: iOS paywall stuck on "Plans are loading" / empty RevenueCat offering — ordered checklist to find and fix it, banking agreement first.
 - `observability.md`: crash + analytics swap contract, Sentry/PostHog playbooks, alternates.
 - `ai-features.md`: optional backend-only AI provider playbook.
 - `app-store.md`: App Store review and packaging checklist.

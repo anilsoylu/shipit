@@ -14,6 +14,7 @@ If this file is copied to the project root, read:
 - `docs/auth.md` (links to `auth/clerk.md`, `auth/betterauth.md`, `auth/supabase.md`, `auth/custom-jwt.md`)
 - `docs/security.md`
 - `docs/payments.md`
+- `docs/storekit-paywall-debug.md`
 - `docs/observability.md`
 - `docs/ai-features.md`
 - `docs/app-store.md`
