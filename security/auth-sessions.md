@@ -87,6 +87,13 @@ the contract doesn't spell out. Per-framework verify middleware lives in
 - **[HARDEN] freshAge re-auth for sensitive mutations** — require recent re-auth
   (~1h) for email/password/2FA/payout changes; long sessions widen the
   stolen-token window. Verify: mutate email with a stale session → step-up challenge.
+- **[HARDEN] Make every second factor single-use and attempt-bounded** — a replayable
+  or unbounded code is a second factor in name only. TOTP: reject a code whose
+  timestep was already accepted (store the last-used counter) and keep the window
+  tight (±1 step). Email/SMS: the challenge has a server-side id, a ~5 min expiry, and
+  an attempt counter — burn the whole challenge (force a resend) after ~5 wrong tries
+  and rate-limit resends, rather than locking the account (which is a lockout DoS).
+  Backup codes are hashed like passwords and each burns on use. Verify: replay an accepted TOTP code in the same timestep → rejected; exhaust an email OTP challenge → it is invalidated and a new code is required, the account is not locked.
 - **[HARDEN] trustedOrigins list the native scheme** — enumerate web domain(s) +
   preview wildcards + the Expo/native scheme (`myapp://`, `exp://`); missing breaks
   mobile auth, a bare `*` widens CSRF trust. Verify: grep the config — native scheme present, no bare `*`.

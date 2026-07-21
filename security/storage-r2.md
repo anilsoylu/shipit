@@ -26,3 +26,14 @@ Part of `../security.md` (tags, threat model, and review method live there).
 - **[HARDEN] Serve user files from a cookieless domain, or force download** — an
   uploaded HTML/SVG served from the app origin is stored XSS; set
   `Content-Disposition: attachment` and a non-renderable `Content-Type`. Verify: upload an `.html`, open its URL → it downloads, does not execute on your origin.
+- **[HARDEN] Sanitize or neutralize active-content uploads (SVG, HTML, PDF)** — an
+  SVG can carry `<script>`/`onload`; strip it on ingest or serve it as an inert type,
+  and AV-scan files shared between users before authorizing the download.
+  ```ts
+  import DOMPurify from "isomorphic-dompurify"
+  // wrong: store/serve the uploaded SVG bytes as-is -> stored XSS on first view
+  await putObject(key, svg, { ContentType: "image/svg+xml" })
+  // right: sanitize on ingest (or serve inert per the attachment rule above)
+  const clean = DOMPurify.sanitize(svg, { USE_PROFILES: { svg: true } })   // drops script/onload
+  ```
+  Verify: upload an SVG containing `<script>alert(1)</script>` → served bytes have no script (or it downloads as an attachment); a known EICAR test file → rejected/quarantined.

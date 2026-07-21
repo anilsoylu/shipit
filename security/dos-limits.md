@@ -32,7 +32,14 @@ disk, or the bill for everyone else.
 - **[HARDEN] Cap archive extraction (zip bomb)** — beyond zip-slip (`injection.md`),
   bound total uncompressed size and entry count before/while extracting; a small
   archive can inflate to gigabytes and fill the disk. Verify: extract a crafted highly-compressed archive → aborts at the size/entry cap.
-- **[HARDEN] Cap cost-amplifying downstreams per user** — expensive external calls
-  (OpenRouter tokens, R2 egress, email/SMS sends, image processing) get a per-user
-  rate/spend cap and a global kill-switch in Redis; one user must not run up the
-  bill or exhaust a provider quota. (AI specifics: `ai-openrouter.md`.) Verify: loop an expensive endpoint past the cap → 429 before further spend, and the global switch halts all callers.
+- **[BLOCKER when unauthenticated/cheaply-automated, else HARDEN] Cap cost-amplifying
+  downstreams per user** — expensive external calls (OpenRouter tokens, R2 egress,
+  email/SMS sends, image processing) get a per-user rate/spend cap and a global
+  kill-switch in Redis. It's a **[BLOCKER]** when an unauthenticated or trivially
+  scripted path drives real money out (an open AI endpoint, an unauthenticated email
+  send) — direct financial loss, not just slowdown; behind auth and a plan quota with
+  no cheap automation path it's **[HARDEN]**. (AI specifics: `ai-openrouter.md`.) Verify: loop an expensive endpoint past the cap → 429 before further spend, and the global switch halts all callers.
+- **[HARDEN] Bound slow and concurrent connections** — cap request/header read
+  timeouts and per-IP concurrent connections so a slowloris (drip-feeding headers)
+  or a connection flood can't tie up every worker; set this at the edge
+  (`edge-proxy.md`) and keep server read timeouts short. Verify: open many slow-drip connections from one IP → capped/timed out, healthy requests still served.

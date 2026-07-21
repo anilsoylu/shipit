@@ -36,3 +36,7 @@ Part of `../security.md` (tags, threat model, and review method live there).
 - **[HARDEN] Sanitize what the proxy returns** — stream only the completion; never
   forward upstream error bodies/headers or echo the system prompt (leaks routing,
   cost, key metadata). Verify: force an upstream 401 → client sees a generic error, no provider detail.
+- **[HARDEN] Isolate context between users** — scope prompt-cache keys, RAG retrieval
+  filters, and conversation memory by the verified user/tenant, or one user's data
+  bleeds into another's completion and a planted document poisons everyone's retrieval
+  (`access-control.md`). Verify: user B's prompt cannot retrieve or surface user A's uploaded document/context; grep RAG retrieval + prompt-cache keys for a user/tenant segment.

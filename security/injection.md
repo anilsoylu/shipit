@@ -16,6 +16,20 @@ SSRF (a server-side fetch of a user-influenced URL) lives in `ssrf.md`.
   const rows = await db.select().from(posts).orderBy(desc(col))
   ```
   Verify: grep `sql.raw(`/`$dynamic(`/`orderBy(` fed by `req.`; never `child_process`/`eval`/shell on untrusted input; send an unknown sort → safe fallback, no SQL error leaked.
+- **[BLOCKER] Coerce query fields to scalars before they reach a filter** — a JSON
+  body parsed straight into a Mongo/query filter lets `{"$ne":null}` or `{"$gt":""}`
+  match any row, and `$where` (plus `$function`/`$accumulate` where server-side JS is
+  enabled) runs JS.
+  ```ts
+  // wrong: body becomes the filter — { "email": {...}, "password": { "$ne": null } }
+  //        skips the password check for whatever email row it matches
+  await users.findOne({ email: req.body.email, password: req.body.password })
+  // right: validate to scalars, query by email only, verify the hash in app code
+  const { email, password } = Login.parse(req.body)   // z.string().email(), never z.any()
+  const u = await users.findOne({ email: email.toLowerCase() })
+  if (!u || !(await argon2.verify(u.passwordHash, password))) throw unauthorized()
+  ```
+  Reject Mongo `$`-prefixed keys. LDAP filters have the same shape (`*)(uid=*` escapes the filter) — escape with the driver's filter-escaper, never string-concat. Verify: send `{"$ne":null}` / `{"$gt":""}` as a query field → rejected at validation, no auth bypass or full-table match.
 - **[BLOCKER] No shell string with user input — pass argv, never a command line** —
   building a shell command from user input (filenames, ids, a URL handed to
   ffmpeg/imagemagick/sharp/git/pdf tooling) is RCE. Use the array form with the

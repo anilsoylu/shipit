@@ -30,3 +30,7 @@ Part of `../security.md` (tags, threat model, and review method live there).
   traces, SQL, driver errors, file paths, or internal hostnames in client responses;
   log detail server-side keyed by a request id; no publicly served source maps.
   Verify: force a DB error via the API → generic body + id, full detail only in the server log/Sentry.
+- **[HARDEN] Run secret scanning in CI, not just once** — gitleaks/trufflehog as a
+  pre-commit hook *and* a CI job on every PR, so a newly committed key fails the
+  build instead of shipping; hold long-lived provider secrets in the secret store
+  or a KMS/vault, not flat env files on disk. Verify: run the scanner against a repo-owned fixture holding a dummy high-entropy token → it exits nonzero and the PR check is required (don't push a real-looking `sk_live_…` to prove it — that trips provider alerts).

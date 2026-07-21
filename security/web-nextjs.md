@@ -75,9 +75,28 @@ Part of `../security.md` (tags, threat model, and review method live there).
   poisoning; see `edge-proxy.md`). Verify: `grep -rniE "headers\(\).*(host|x-forwarded-host)"` → none feed link construction.
 - **[HARDEN] Open redirects: same-origin relative only** — honor `next`/`returnTo`
   only when it matches `^/(?!/)` (single leading slash, no scheme). Verify: a protocol-relative `returnTo` → rejected.
+- **[HARDEN] Don't serialize secrets into the RSC/client payload** — a prop passed
+  from a Server Component into a `"use client"` component is serialized into the HTML
+  the browser receives, so handing a whole DB row (`passwordHash`, internal flags,
+  foreign-user fields) or a server secret across that line leaks it to view-source.
+  ```tsx
+  // wrong: whole row crosses into a "use client" component -> serialized to the browser
+  <Profile user={await db.query.users.findFirst({ where: eq(users.id, id) })} />
+  // right: project the public shape first
+  <Profile user={{ id: u.id, displayName: u.displayName }} />
+  ```
+  Verify: view-source / the RSC payload on an authed page → no hash, secret, or foreign-user field; grep `"use client"` component props for whole-row / `select(*)` shapes.
 - **[HARDEN] Guard DOM/markup sinks** — sanitize before `dangerouslySetInnerHTML`;
   render markdown through an allowlist sanitizer; anchor `postMessage` `event.origin`
-  to an allowlist. Verify: `grep -rn "dangerouslySetInnerHTML" .` → each has a sanitizer upstream.
+  to an allowlist.
+  ```tsx
+  import DOMPurify from "isomorphic-dompurify"
+  // wrong: raw user/model HTML into the sink -> stored/reflected XSS
+  <div dangerouslySetInnerHTML={{ __html: userHtml }} />
+  // right: sanitize before the sink
+  <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(userHtml) }} />
+  ```
+  Verify: `grep -rn "dangerouslySetInnerHTML" .` → each has a sanitizer upstream.
 - **[HARDEN] Lock server-side fetch + image optimization (SSRF)** —
   `images.remotePatterns` lists exact hosts, never `**`; no user-controlled host in
   server `fetch`. See `ssrf.md`. Verify: grep `remotePatterns` for `**`.

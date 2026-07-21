@@ -33,11 +33,18 @@ Traefik; it must trust nothing a client can forge through it.
   Coolify UI, and Postgres/Redis ports bind to the private network or sit behind
   auth; never expose them on `0.0.0.0`. (App diagnostics endpoints: `secrets-config.md`.)
   Verify: from outside the host, curl the Traefik dashboard and the Coolify port → connection refused / 401, never 200.
-- **[HARDEN] One normalizing hop, no smuggling surface** — terminate TLS and parse
-  requests at Traefik; don't stack a second proxy that interprets
-  `Content-Length`/`Transfer-Encoding` differently, and keep a body-size limit at
-  the edge (`dos-limits.md`). Divergent parsing between hops is request smuggling.
-  Verify: edge and app agree on ambiguous `Content-Length`/`Transfer-Encoding`; an oversized body is rejected at the edge.
+- **[HARDEN] Terminate at one normalizing hop and reject ambiguous framing** —
+  terminate TLS and parse requests at Traefik; don't stack a second proxy that
+  disagrees on how a request is framed, and keep a body-size limit at the edge
+  (`dos-limits.md`). When a front-end honors `Content-Length` and a back-end honors
+  `Transfer-Encoding` (or vice versa), the back-end sees a second request the
+  front-end never authorized — that is request smuggling. A request carrying *both*
+  headers is ambiguous by definition; reject it rather than letting each hop guess.
+  Verify: send one request with both `Content-Length` and `Transfer-Encoding: chunked` → the edge returns 400, it does not forward; an oversized body is rejected at the edge.
 - **[HARDEN] HSTS and TLS terminate at the edge** — Traefik serves HTTPS only,
   redirects HTTP→HTTPS, and sets HSTS; the app-level HSTS header (`web-nextjs.md`)
   is a backstop, not the primary. Verify: `curl -I http://APP` → 308 to https; `curl -I https://APP` shows `Strict-Transport-Security`.
+- **[HARDEN] A coarse rate limit at the edge backstops the app** — Traefik enforces
+  a blunt per-IP request cap and short connection/header-read timeouts, so floods
+  and slow-drip (slowloris) connections are shed before they reach the app's finer
+  per-route limits (`dos-limits.md`, `auth-sessions.md`). Verify: hammer any path from one IP past the edge cap → 429/dropped at Traefik, the app never sees it.

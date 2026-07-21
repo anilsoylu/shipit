@@ -32,3 +32,9 @@ Part of `../security.md` (tags, threat model, and review method live there).
 - **[HARDEN] Route auth events to an audit trail** — session create/revoke, login
   success+failure, password/email change, account link, role change → structured
   audit events (actor, target, source ip, timestamp). Verify: a role change produces a structured audit event; failed-login spikes are queryable/alertable.
+- **[HARDEN] Make the audit trail append-only and bound log retention** — no app-path
+  UPDATE/DELETE touches the audit table, and it is readable only by admins; that makes
+  it tamper-*resistant*. For tamper-*evidence* (detecting after-the-fact edits) you
+  need more: a hash chain over rows, signed entries, or a WORM/append-only sink the
+  app can't rewrite. General logs expire on a schedule so PII (tokens in query strings,
+  request context) doesn't accumulate forever. Verify: `grep -rEn 'update\(audit|delete\(audit|DELETE FROM audit|UPDATE audit' src/` → none outside migrations; a retention/rotation policy exists and runs.

@@ -37,3 +37,8 @@ Part of `../security.md` (tags, threat model, and review method live there).
   USER app
   ```
   Verify: `docker history --no-trunc <image>` shows no secret literal; `docker inspect` / the running container reports a non-root user; `grep -E '^(ADD|USER|ARG)' Dockerfile` — no `ADD` on remote/archive input, a `USER` set, no secret-bearing `ARG`.
+- **[HARDEN] Block dependency confusion and hostile install scripts** — scope
+  internal packages (`@org/*`) and pin the registry in `.npmrc` so a public
+  same-named package can't shadow a private one; review new deps for typosquats;
+  run CI installs with `--ignore-scripts` (or an allowlist) so a `postinstall`
+  can't execute on the build box. Verify: `.npmrc` pins `@org:registry=`; the CI install runs `--ignore-scripts` (or pnpm `onlyBuiltDependencies`); a lockfile diff is reviewed on every dependency bump.

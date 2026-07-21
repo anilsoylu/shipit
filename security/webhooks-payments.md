@@ -94,3 +94,7 @@ is in `per-framework.md`. The traps:
 - **[HARDEN] Dedup in the same transaction as the side effect** — insert `event.id`
   under a unique constraint and grant in one tx; check-then-write races on
   concurrent retries and double-grants. Verify: replay the same webhook id twice concurrently → exactly one grant.
+- **[HARDEN] Enforce the signature timestamp window** — keep `constructEvent`'s default
+  (~5 min) tolerance so a captured request can't be replayed later, and dedup `event.id`
+  so even an in-window replay grants once; a hand-rolled verifier or a raised tolerance
+  re-opens replay. Verify: replay a captured webhook 10 min later → rejected on timestamp; replay within the window → deduped to a single grant.

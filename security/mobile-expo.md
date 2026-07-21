@@ -22,3 +22,18 @@ Part of `../security.md` (tags, threat model, and review method live there).
   bypassable and must never gate server-side authorization; for high-value flows
   use server-verified Play Integrity / App Attest, and sign OTA updates (EAS Update
   code signing). Verify: server rejects the action when attestation is absent; a tampered OTA update is rejected.
+- **[HARDEN] Consider TLS pinning only where the threat model warrants it** — pinning
+  defeats an on-device proxy CA reading/modifying API traffic, but it is optional
+  hardening, not a baseline: a botched rotation bricks every installed app until they
+  update. If you pin, pin the public key (SPKI hash) of the CA/intermediate rather
+  than the leaf, ship a backup pin, and have a rotation plan before the first pin
+  goes live. Verify: run the app through an intercepting proxy with a trusted custom CA → pinned calls fail; confirm a documented backup pin and rotation runbook exist.
+- **[HARDEN] Harden every WebView** — a WebView rendering remote or user content is
+  a browser inside your app: never inject secrets/tokens via `injectedJavaScript`,
+  disable file access, restrict navigation to an allowlist, and treat `onMessage`
+  payloads as untrusted.
+  ```tsx
+  <WebView source={{ uri }} originWhitelist={["https://app.example.com"]}
+    allowFileAccess={false} allowingReadAccessToURL={undefined} />
+  ```
+  Verify: WebView props show `allowFileAccess={false}`, `originWhitelist` is not `["*"]`, and no token is interpolated into injected JS.

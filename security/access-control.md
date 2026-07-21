@@ -35,6 +35,15 @@ missing auth.
   privileged or corrupt state (self-assigns role, nulls a foreign key). Authorize
   against the *existing* row's owner, not the incoming payload's. Red-team the
   *sequence*, not the endpoint.
+  ```ts
+  // wrong: PATCH trusts the payload; CREATE validated but UPDATE re-opens it
+  await db.update(tasks).set(input).where(eq(tasks.id, id))     // input.ownerId self-assigns
+  // right: authorize against the EXISTING row, then set only mutable fields
+  const row = await db.query.tasks.findFirst({
+    where: and(eq(tasks.id, id), eq(tasks.orgId, session.orgId)) })
+  if (!row) throw forbidden()
+  await db.update(tasks).set({ title: input.title }).where(eq(tasks.id, id))
+  ```
   Verify: for each resource, PATCH a row you own to set `ownerId`/`role`/`tenantId` to another value → rejected; treat `ownerId`/`tenantId`/`createdAt`/`status` as immutable post-create.
 - **[BLOCKER] No mass-assignment** — never spread the request body into `.set()`/
   `.insert()`. Pick mutable columns explicitly per role; sensitive columns
@@ -46,6 +55,19 @@ missing auth.
   await db.update(users).set({ displayName: input.displayName }).where(eq(users.id, userId))
   ```
   Verify: grep for `.set(req.body`/`.set(body`/`.values(req.body`; send an extra `role`/`price` key → ignored, not written.
+- **[BLOCKER] Check the capability on every privileged endpoint, not just the session**
+  — function-level authorization (BFLA): an admin/moderator/internal route that
+  only checks "is logged in" lets any authenticated user hit it by guessing the
+  path. Reachability is not authorization; gate the *operation*, not just the row.
+  ```ts
+  // wrong: authenticated, but no capability gate on an admin action
+  const session = await requireSession(req)
+  await db.delete(users).where(eq(users.id, targetId))
+  // right: assert the capability from server-verified role/permissions
+  const session = await requireSession(req)
+  requirePermission(session, "users:delete")   // throws 403 unless the role grants it
+  ```
+  Verify: enumerate admin/internal routes, call each as a plain authed non-admin user → 403, not 200; grep privileged handlers for a role/permission check, not just an `auth()` presence check.
 - **[HARDEN] Field-allowlist ≠ ownership** — *which* fields may change is not *who*
   may change them; always pair a column allowlist with the ownership check. Verify: a valid field edit on a row you don't own → 404.
 - **[HARDEN] IDOR on bulk & alternate paths** — enforce the same per-item check on

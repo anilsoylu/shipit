@@ -12,7 +12,7 @@ Primary instructions:
 - `docs/backend.md` (links to `backend/fastify.md`, `backend/hono.md`, `backend/go.md`, `backend/rust.md`, `backend/python.md`)
 - `docs/data.md`
 - `docs/auth.md` (links to `auth/clerk.md`, `auth/betterauth.md`, `auth/supabase.md`, `auth/custom-jwt.md`)
-- `docs/security.md` (links to `security/access-control.md`, `security/injection.md`, `security/ssrf.md`, `security/auth-sessions.md`, `security/crypto-transport.md`, `security/web-nextjs.md`, `security/edge-proxy.md`, `security/mobile-expo.md`, `security/webhooks-payments.md`, `security/storage-r2.md`, `security/ai-openrouter.md`, `security/secrets-config.md`, `security/logging-privacy.md`, `security/dependencies.md`, `security/dos-limits.md`, `security/per-framework.md`)
+- `docs/security.md` (links to `security/access-control.md`, `security/injection.md`, `security/ssrf.md`, `security/auth-sessions.md`, `security/crypto-transport.md`, `security/web-nextjs.md`, `security/edge-proxy.md`, `security/mobile-expo.md`, `security/webhooks-payments.md`, `security/storage-r2.md`, `security/ai-openrouter.md`, `security/secrets-config.md`, `security/logging-privacy.md`, `security/dependencies.md`, `security/dos-limits.md`, `security/incident-response.md`, `security/per-framework.md`)
 - `docs/payments.md`
 - `docs/storekit-paywall-debug.md`
 - `docs/observability.md`
