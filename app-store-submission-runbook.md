@@ -5,12 +5,13 @@ TestFlight" to "submitted for review", with the real commands and the gotchas th
 cost the most time. Complements `app-store.md` (the conceptual gate) and `aso.md`.
 
 Tooling used:
-- **ascelerate** — App Store Connect CLI (metadata, media, IAP, review). `ascelerate configure` once (needs ASC API key `.p8` + Issuer ID + Key ID; the `.p8` downloads **only once** at key creation).
+
+- **`asc`** (rorkai/App-Store-Connect-CLI) — App Store Connect CLI (metadata, media, IAP, age rating, review, submission). `asc auth login --name <n> --key-id <KEY_ID> --issuer-id <ISSUER_ID> --private-key <path/AuthKey.p8>` once (the `.p8` downloads **only once** at key creation; asc stores the key material in the macOS keychain). Disable telemetry: `asc telemetry disable`.
 - **`xcrun simctl`** — simulator control for screenshots (no TCC permissions needed, unlike cliclick/screencapture/System Events which are blocked in headless shells).
 - **Headless Chrome** — render marketing screenshots (perfect multilingual text via macOS system fonts).
-- **Claude-in-Chrome** (browser automation) — only for ASC web-UI-only screens (see Phase 6). Burns usage limits fast; prefer CLI.
+- **Claude-in-Chrome** (browser automation) — only for the few remaining web-UI-only screens (see Phase 6, now mostly the privacy nutrition label). Burns usage limits fast; prefer CLI.
 
-Key principle: **do as much as possible via `ascelerate` (CLI). A surprising amount is web-UI-only** — plan for it.
+Key principle: **do as much as possible via `asc` (CLI). `asc` covers far more than the old tooling — age rating, primary language, content rights, review contact info, copyright, and price are all CLI now; the privacy nutrition label is the main web-only holdout.**
 
 ---
 
@@ -19,6 +20,7 @@ Key principle: **do as much as possible via `ascelerate` (CLI). A surprising amo
 App Store requires iPhone **6.9"/6.7"** screenshots: **1290×2796** (iPhone 15 Pro Max works; a 6.3" iPhone 17 Pro at 1206×2622 is NOT an accepted size). iPhone-only app (UIDeviceFamily=1) → no iPad screenshots needed.
 
 Capture with zero UI taps (macOS TCC blocks synthetic clicks in headless shells):
+
 - **Language switch** = set the simulator's device locale + reboot. Works when the app reads `getLocales()` and has no saved in-app language override:
   ```
   xcrun simctl spawn <sim> defaults write -g AppleLanguages -array "es"
@@ -42,11 +44,13 @@ Loop all languages in a background shell script; verify with a montage (`montage
 ## Phase 2 — Marketing frames (optional but recommended)
 
 Raw simulator captures are valid, but framed "caption + device + branded gradient" images convert better and their captions are indexed by Apple (since 2025). Build them with **headless Chrome** rendering an HTML/CSS template (1290×2796 canvas, gradient bg, localized headline, device screenshot with rounded corners + shadow), one per language:
+
 ```
 "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" \
   --headless=new --disable-gpu --force-device-scale-factor=1 \
   --window-size=1290,2796 --screenshot=out.png "file:///tmp/frame.html"
 ```
+
 macOS system fonts cover Arabic (RTL), CJK, Devanagari, Cyrillic — set `dir="rtl"` for Arabic. Reuse the app's own onboarding slide titles as captions (already professionally localized). Keep raw captures in `media/`, framed in `framed/`.
 
 ---
@@ -54,6 +58,7 @@ macOS system fonts cover Arabic (RTL), CJK, Devanagari, Cyrillic — set `dir="r
 ## Phase 3 — ASO metadata (15 languages)
 
 Fields and hard limits (per locale):
+
 - **name** (app-info) — **30 chars**
 - **subtitle** (app-info) — **30 chars**
 - **keywords** (version) — **100 BYTES** (not chars! Arabic/CJK/Cyrillic/Devanagari = 2–3 bytes/char — validate with `Buffer.byteLength(s,'utf8')`)
@@ -62,29 +67,42 @@ Fields and hard limits (per locale):
 - **whatsNew** (version) — release notes; **not required for a 1.0 first submission** (preflight tools flag it as a false positive)
 
 Coordination rules (Apple indexes name + subtitle + keywords, each word once):
+
 - Put top keywords in the **title** (strongest signal), asset-type keywords in subtitle, the rest in keywords — **no word repeats across the three**.
 - Keyword list: comma-separated, **no spaces** after commas.
 - Run generated copy through a **humanizer** pass (cut AI-tells: rigid "• Label: description" lists, three-part structures, puffery) so it doesn't read machine-generated.
 
-Store as two JSON files (ascelerate import format):
-- `app-infos.json`: `{ "en-US": { "name", "subtitle", "privacyPolicyURL" } }`
-- `localizations.json`: `{ "en-US": { "keywords", "description", "promotionalText", "supportURL" } }`
+Two field groups, two asc resources:
 
-Validate all lengths (chars for name/subtitle/desc/promo; **bytes** for keywords) before importing.
+- **app-info** localizations (`name`, `subtitle`, `privacyPolicyURL`) — set with `asc app-setup info set`.
+- **version** localizations (`keywords`, `description`, `promotionalText`, `supportURL`, `whatsNew`) — set with `asc localizations update`.
+
+Validate all lengths (chars for name/subtitle/desc/promo; **bytes** for keywords) before writing.
 
 ---
 
-## Phase 4 — Upload via ascelerate
+## Phase 4 — Upload via asc
+
+Resolve IDs first: `asc apps list --bundle-id <bundleId>` → APP_ID; `asc versions list --app <APP_ID>` → VERSION_ID. Then per locale:
 
 ```
-ascelerate apps app-info import <app> --file app-infos.json -y          # name + subtitle + privacy URL
-ascelerate apps localizations import <app> --file localizations.json -y # keywords + description + promo (see Support URL caveat below)
-ascelerate apps media upload <app> screenshots/framed -y                # media/{ascLocale}/APP_IPHONE_67/NN_name.png, alpha order = display order
-ascelerate apps app-info update <app> --primary-category FINANCE -y
-ascelerate apps build attach-latest <app> -y                            # attach the processed TestFlight build to the version
-ascelerate apps review preflight <app>                                  # shows remaining gaps (ignore "What's New" for 1.0)
+# app-info: name + subtitle (+ privacy URL / primary language on the primary locale)
+asc app-setup info set --app <APP_ID> --locale <loc> --name "..." --subtitle "..."
+asc app-setup info set --app <APP_ID> --primary-locale en-US --privacy-policy-url "https://site.com/privacy"
+
+# version localization: keywords + description + promo + support URL (asc DOES write support-url/whats-new)
+asc localizations update --version <VERSION_ID> --locale <loc> --keywords "a,b,c" --description "..." --promotional-text "..." --support-url "https://site.com/support"
+
+# media: fan out over locale dirs under ./screenshots/framed (run `asc screenshots sizes` for exact device tokens)
+asc screenshots upload --app <APP_ID> --version-id <VERSION_ID> --path ./screenshots/framed --device-type IPHONE_67
+
+# category + build + readiness
+asc app-setup categories set --app <APP_ID> --primary FINANCE
+asc versions attach-build --version-id <VERSION_ID> --build-id <BUILD_ID>
+asc review doctor --app <APP_ID>   # explains remaining blockers (ignore "What's New" for a 1.0)
 ```
-Import auto-creates missing locales. ASC locale codes: `en-US, es-ES, pt-BR, de-DE, fr-FR, it, ar-SA, id, ja, ko, hi, ru, nl-NL, pl, tr` (verify per app).
+
+`asc localizations create --version <VERSION_ID> --locale <loc>` auto-adds a missing locale; the bulk `asc metadata` canonical-file workflow (`init` → edit → `push`) is the alternative for many locales at once. ASC locale codes: `en-US, es-ES, pt-BR, de-DE, fr-FR, it, ar-SA, id, ja, ko, hi, ru, nl-NL, pl, tr` (verify per app).
 
 ---
 
@@ -92,20 +110,31 @@ Import auto-creates missing locales. ASC locale codes: `en-US, es-ES, pt-BR, de-
 
 Match ASC product IDs to the RevenueCat products (`store_identifier`, e.g. `premium_monthly`, `premium_yearly`). Check RevenueCat first (MCP or dashboard) for the exact IDs.
 
+The fastest path for a new sub is the one-shot `asc subscriptions setup` (it does group localization + sub localization + review screenshot + pricing + availability and verifies the final state):
+
 ```
-ascelerate sub create-group <app> --name "Premium" -y
-ascelerate sub create <app> --name "Premium Monthly" --product-id premium_monthly --period ONE_MONTH -y
-ascelerate sub create <app> --name "Premium Yearly"  --product-id premium_yearly  --period ONE_YEAR  -y
+asc subscriptions setup --app <APP_ID> --group-reference-name "Premium" \
+  --reference-name "Premium Monthly" --product-id premium_monthly --subscription-period ONE_MONTH \
+  --price 3.99 --price-territory "United States" --territories "US,..." --locale en-US --name "Premium" --description "..."
 ```
 
-For each subscription to become **"Ready To Submit"** it needs FIVE things:
-1. **Price** — `ascelerate sub pricing set` often returns **HTTP 409** for brand-new subs. Fallback: set the price in the **ASC web UI** (Subscriptions → product → Add Subscription Price → pick USD base → Apple auto-equalizes 175 territories → Confirm). The web flow works where the CLI fails.
-2. **Localization** (display name ≤30 + description ≤45/55) — `ascelerate sub localizations import <app> <pid> --file sub.json` (`{ "en-US": { "name", "description" } }`). Include the app's primary language (and add en-US if you switch primary to English later).
-3. **Availability** — web UI (Set Up Availability → All → Confirm), or `sub availability`. For a yearly sub with "Monthly-with-12-month-commitment", set the **1-Year-Upfront** availability first.
-4. **Review screenshot** — `ascelerate sub review-screenshot upload <app> <pid> <paywall.png>` (CLI works; browser `file_upload` no longer accepts host paths). Use the paywall screenshot.
+Low-level equivalents (for repair flows) — first create the group + subs:
+
+```
+asc subscriptions groups create --app <APP_ID> --reference-name "Premium"
+asc subscriptions create --group-id <GROUP_ID> --reference-name "Premium Monthly" --product-id premium_monthly --subscription-period ONE_MONTH
+asc subscriptions create --group-id <GROUP_ID> --reference-name "Premium Yearly"  --product-id premium_yearly  --subscription-period ONE_YEAR
+```
+
+For each subscription to become **"Ready To Submit"** it needs FIVE things (product-scoped resources are deprecated — use the version-scoped commands below):
+
+1. **Price** — `asc subscriptions pricing prices set --subscription-id <SUB_ID> --price-point <PP_ID>` (or `asc subscriptions pricing equalize --subscription-id <SUB_ID> --base-price 3.49`) can still return **HTTP 409** for brand-new subs. Fallback: set the price in the **ASC web UI** (Subscriptions → product → Add Subscription Price → USD base → Apple auto-equalizes → Confirm). Apple's restriction, not a CLI limit.
+2. **Localization** (display name ≤30 + description ≤45/55) — `asc subscriptions versions localizations create --version-id <SUB_VERSION_ID> --locale en-US --name "..." --description "..."`. Include the app's primary language.
+3. **Availability** — `asc subscriptions pricing availability` (or handled by `asc subscriptions setup`). For a yearly sub with "Monthly-with-12-month-commitment", set the **1-Year-Upfront** availability first (`asc subscriptions pricing monthly-commitment`).
+4. **Review screenshot** — `asc subscriptions review screenshots create --subscription-id <SUB_ID> --file <paywall.png>`. Use the paywall screenshot.
 5. **⚠️ Subscription GROUP localization** — the single most common cause of a stuck "Missing Metadata". Even with all four above, the **group** needs a display-name localization:
    ```
-   ascelerate sub group-localizations import <app> --file group.json   # { "en-US": { "name": "Premium" }, "tr": { "name": "Premium" } }
+   asc subscriptions groups versions localizations create --version-id <GROUP_VERSION_ID> --locale en-US --name "Premium"
    ```
    Adding this flips both subs to "Ready To Submit".
 
@@ -113,48 +142,55 @@ At submission time the **first subscription must be included with the app versio
 
 ---
 
-## Phase 6 — Web-UI-only items (ascelerate can't do these)
+## Phase 6 — Declarations (mostly CLI now; one web-only holdout)
 
-Use the ASC web site (or Claude-in-Chrome). None of these have CLI support:
-- **App Privacy nutrition label** — data-collection questionnaire. Answer from the real privacy policy: pick data types (Contact Info, Financial Info, User Content, Identifiers, Purchases, Diagnostics...), and for each set purpose (**App Functionality**), linked-to-identity (**Yes** for account apps), and tracking (**No** if no ads/analytics). Then **Publish**.
-- **Age Rating** — questionnaire (7 steps). A finance/tracker with no objectionable content → all "None"/"No" → **4+**.
-- **Primary Language** — App Information → Primary Language dropdown (target locale must have a complete localization first). Not exposed by ascelerate.
-- **Content Rights** — App Information → declare third-party content (a price/market-data app that shows provider data → "Yes... I have the necessary rights").
-- **Copyright** — on the **version page** (not App Information), e.g. `2026 Your Name`.
-- **Price tier** — Pricing and Availability → set **Free** (freemium apps monetize via IAP). App Availability at 175 countries is correct/desired.
-- **App Review Information** (version page) — **contactFirstName + contactLastName + contactPhone are REQUIRED** and NOT settable by ascelerate (its `review info` command only has email/demo/notes → 409 without them). Fill contact + tick "Sign-in required" + demo account + review notes here.
-- **Encryption** — if the build has `ITSAppUsesNonExemptEncryption=false` in Info.plist, no ASC declaration/documentation is needed.
-- **Sign in with Apple** — required (4.8) if the app offers any third-party/social login (e.g. Google). Must be present in the app.
+Everything below except the privacy nutrition label is a first-class `asc` command:
+
+- **Age Rating** — `asc age-rating edit --app <APP_ID> --all-none` sets every field to its safe default (a finance/tracker with no objectionable content → **4+**). Override individual fields as needed; `asc age-rating view --app <APP_ID>` to confirm. (Apple's 2026 questionnaire also asks about **social media / messaging** capabilities — a tracker with only support messaging answers `--messaging-and-chat false --social-media false --user-generated-content false`.)
+- **Primary Language** — `asc app-setup info set --app <APP_ID> --primary-locale <loc>` (the locale must have a complete localization first).
+- **Content Rights** — `asc app-setup info set --app <APP_ID> --content-rights USES_THIRD_PARTY_CONTENT` (a price/market-data app that shows provider data) or `DOES_NOT_USE_THIRD_PARTY_CONTENT`.
+- **Copyright** — `asc versions update --version-id <VERSION_ID> --copyright "2026 Your Name"` (it lives on the version, not App Information).
+- **Price tier** — `asc app-setup pricing set --app <APP_ID> --free` (freemium apps monetize via IAP). Availability at 175 countries via `asc pricing availability`.
+- **App Review Information** — `asc review details-create --version-id <VERSION_ID> --contact-first-name ... --contact-last-name ... --contact-phone ... --contact-email ... --notes "..."`. Add `--demo-account-required=true --demo-account-name ... --demo-account-password ...` when review needs credentials. (The old CLI could not set contact first/last/phone; `asc` can.)
+- **Encryption** — if the build has `ITSAppUsesNonExemptEncryption=false` in Info.plist, no ASC declaration is needed (`asc encryption` handles it otherwise).
+- **Sign in with Apple** — required (4.8) if the app offers any third-party/social login (e.g. Google). App-side; must be present in the build.
 - **Demo account** — create one via the backend signup API (no manual account needed); confirm it can sign in (email-verification must not block it).
+
+Still web-UI-only (not in Apple's public API):
+
+- **App Privacy nutrition label** — data-collection questionnaire. Use `asc web privacy` (web-session helper) or the ASC web UI. Answer from the real privacy policy: pick data types (Contact Info, Financial Info, User Content, Identifiers, Purchases, Diagnostics...), set purpose (**App Functionality**), linked-to-identity (**Yes** for account apps), tracking (**No** if no ads). Then **Publish**. Note: first-party product analytics that collects usage/diagnostics data must be declared here.
 
 ---
 
-## Phase 7 — Support & Privacy URLs (subtle CLI trap)
+## Phase 7 — Support & Privacy URLs
 
-- **`ascelerate apps localizations import` does NOT write `supportURL`/`whatsNew`** (only description/keywords/promo), even though it prints them. Use the per-locale `update`:
+- **Support URL** is a version-localization field; `asc localizations update` writes it directly:
+
   ```
-  ascelerate apps localizations update <app> --locale en-US --support-url "https://site.com/support"
+  asc localizations update --version <VERSION_ID> --locale en-US --support-url "https://site.com/support"
   ```
-  - **No `-y` flag** on `update` (it's an invalid option and makes every call fail).
-  - In loops, `ascelerate` can drop out of PATH → call it by full path (`/opt/homebrew/bin/ascelerate`).
-- Privacy Policy URL lives in **app-info** (`privacyPolicyURL`), Support URL in **version localizations**. Both must be **live** during review.
+
+  Locale must match the exact ASC form (`en-US`, `ar-SA`, `zh-Hans` — run `asc localizations supported-locales --version <VERSION_ID>` if one is rejected).
+
+- Privacy Policy URL lives in **app-info** (`asc app-setup info set --primary-locale <loc> --privacy-policy-url ...`), Support URL in **version localizations**. Both must be **live** during review.
 - Both URLs must be reachable in a real browser. Server-side/sandbox `curl`/`fetch` may get **522** from Cloudflare bot-blocking even when the site is fine in a browser — verify from an actual browser, not a headless fetch.
 
 ---
 
 ## Phase 8 — "Add for Review" checklist
 
-The web "Add for Review" button surfaces the definitive blocker list. Common ones and where to fix:
+`asc review doctor --app <APP_ID>` surfaces the definitive blocker list. Common ones and where to fix:
 | Blocker | Fix |
 | --- | --- |
-| Support URL required (all locales) | `ascelerate localizations update --support-url` (Phase 7) |
-| Contact Information | version page → App Review Information (contact + demo + notes) |
-| Copyright | version page → Copyright field |
-| Price tier | Pricing and Availability → Free |
-| Content Rights | App Information → declare |
+| Support URL required (all locales) | `asc localizations update --support-url` (Phase 7) |
+| Contact Information | `asc review details-create` (Phase 6) |
+| Copyright | `asc versions update --copyright` (Phase 6) |
+| Price tier | `asc app-setup pricing set --free` (Phase 6) |
+| Content Rights | `asc app-setup info set --content-rights` (Phase 6) |
+| Age Rating | `asc age-rating edit --all-none` (Phase 6) |
 | IAP "Missing Metadata" | group localization (Phase 5) |
 
-Then the developer clicks **Add for Review → Submit** (do this last, after preflight is clean apart from the 1.0 "What's New" false positive).
+Then submit with `asc review submit` (attaches the build, creates the submission, adds items, and submits in one wrapper) — do this last, after `asc review doctor` is clean apart from the 1.0 "What's New" false positive. `asc review status --app <APP_ID>` tracks state afterward.
 
 ---
 
@@ -165,7 +201,8 @@ If the marketing/legal site (privacy/terms/support pages) 522s or 301-loops on t
 ---
 
 ## Time-savers next time
-1. Configure `ascelerate` and confirm the RevenueCat product IDs before anything else.
+
+1. `asc auth login` and confirm the RevenueCat product IDs before anything else.
 2. Do screenshots + ASO + IAP config in parallel background jobs; verify every screenshot (RTL/slow-boot silently fail).
-3. Expect the **group localization** + **support-url `update`** + **web-UI-only** traps — they cause most of the "why is it still not ready" loops.
+3. Expect the **subscription group localization** trap (Phase 5) — the top cause of "why is it still not ready" loops. The old support-url / web-only traps are mostly gone now that `asc` covers those fields.
 4. Keep the demo account and backend live from submission through review.
