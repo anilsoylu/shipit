@@ -48,6 +48,7 @@ Load the file for the class you're building or hunting.
 | `security/webhooks-payments.md` | Stripe/RevenueCat webhooks, entitlement grants, refund/dispute, race / double-spend |
 | `security/storage-r2.md` | R2 signed URLs, upload constraints, serving user files |
 | `security/ai-openrouter.md` | AI proxy, tool-call authz, model-output sinks, cost caps |
+| `security/agentic-mcp.md` | multi-step agents, MCP servers, tool gating, RAG/memory poisoning, agent egress |
 | `security/secrets-config.md` | committed secrets, diagnostics endpoints, env injection, error hygiene |
 | `security/logging-privacy.md` | Sentry/PostHog scrubbing, logger redaction, PII minimization, audit trail |
 | `security/dependencies.md` | dependency audit gate, lockfile, SRI, pinned actions/images |
@@ -100,9 +101,17 @@ the last one.
 - **API ↔ AI provider** (OpenRouter): outbound egress. Key server-only; treat
   model output as untrusted input; cap tokens/cost + per-user rate-limit; strip
   PII from prompts.
+- **agent ↔ tools/MCP** (only when the product runs an agent loop): the agent
+  holds the union of its tools' privileges, and everything it reads — tool
+  descriptions, tool results, retrieved documents — is instruction text an
+  attacker can write. Gate irreversible actions in code, allowlist egress, scope
+  each tool credential. See `security/agentic-mcp.md`.
 - **internet ↔ edge** (Traefik/Coolify): the reverse proxy is the only public
   hop. Forwarded headers are trusted only from the proxy; admin planes and infra
   ports never face the internet. See `security/edge-proxy.md`.
+- **dev machine ↔ agent config** (CI/dev trust, not runtime): committed skills,
+  hooks, and MCP manifests execute with developer credentials. Reviewed and
+  pinned like any dependency. See `security/dependencies.md`.
 
 ## Security review pass (before ship)
 
@@ -139,6 +148,17 @@ stages is the whole method.
    confirm it now refuses. A fix is done when the reproduction stops reproducing,
    not when the diff looks right. Label honestly: `verified` (ran it) vs
    `static-review-only`.
+
+**Tooling (recall aids for stage 2, never a substitute for it):** deterministic
+scanners first — `semgrep --config auto`, `gitleaks detect`, `osv-scanner` /
+`pnpm audit` (`security/dependencies.md`) — then an agentic sweep if the repo is
+large (Vercel `deepsec`, Anthropic `claude-code-security-review`). AI features get
+their own gate: `promptfoo redteam` / `garak` against a preview deploy
+(`security/agentic-mcp.md`); repos shipping agent config get `agent-audit` /
+`skill-scanner`. Every tool emits *candidates*, not findings: they enter stage 3
+with no privilege over a human-found candidate, and an agentic scanner's prose is
+repo-derived bytes — untrusted input under the injection-hygiene rule below.
+Tool silence is not coverage; a class with no tool still gets its manual pass.
 
 **Severity = exploitability × impact** — derive it, don't inherit the scanner's
 label. *Exploitability* is how easily an attacker reaches the bug; *impact* is what

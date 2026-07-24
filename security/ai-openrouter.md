@@ -2,6 +2,9 @@
 
 Part of `../security.md` (tags, threat model, and review method live there).
 
+Scope: single-turn LLM calls through your proxy. Multi-step agents, MCP servers,
+and RAG/memory poisoning are `agentic-mcp.md`.
+
 - **[BLOCKER] Tool-calls authorize the requesting user against the target resource**
   — the model supplies the args (untrusted); authorization uses the server session
   identity on the specific resource, never a service key, or the agent is a confused

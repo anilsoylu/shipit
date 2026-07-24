@@ -129,6 +129,9 @@ Registry in `skills.md`.
 
 ### Agent frameworks
 
+Any agent loop with tools or MCP is a separate security class — read
+`security/agentic-mcp.md` before wiring one.
+
 - **Mastra** — TS agents with tools, workflows, memory, RAG on the backend.
   Skill `mastra-ai/skills`; llms.txt https://mastra.ai/llms.txt
 - **LangGraph** — stateful graph-based multi-agent orchestration. Check https://docs.langchain.com.

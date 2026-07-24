@@ -87,6 +87,7 @@ See `security.md` for the full playbook and the review method.
 - Inputs validated at every boundary (Zod); queries parameterized.
 - Webhooks verify signatures against the raw body; entitlements reconciled with the provider.
 - AI routes: keys server-only, model output treated as untrusted, per-user rate/cost limits.
+- Agents/MCP (if any): irreversible tool calls gated in code, MCP servers pinned and scoped, agent egress allowlisted, injection cases in CI.
 - Secrets: none committed (rotate if any ever were); no debug/metrics/pprof exposed in prod.
 - Logs scrubbed of tokens, cookies, and PII; prod errors don't leak internals.
 - Security review pass completed (disprove-first; severity = likelihood × impact).

