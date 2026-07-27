@@ -40,6 +40,7 @@ Check before review:
 - What's New text for updates.
 - No claims that the app does not actually support.
 - No placeholder screenshots, lorem ipsum, staging labels, debug UI, or internal URLs.
+- **Auto-renewable subscriptions: the description must carry a working Terms of Use (EULA) link, in every locale.** An in-app link on the paywall does not satisfy this; the scan only reads metadata. Either link your own terms page or Apple's standard EULA (https://www.apple.com/legal/internet-services/itunes/dev/stdeula/). Open each URL and confirm it returns 200 before submitting.
 
 ## Screenshot Gate
 
@@ -119,6 +120,8 @@ When the app has traffic:
 - Screenshots show old UI.
 - IAP products missing, inaccurate, or not reviewable.
 - Privacy policy missing.
+- **Guideline 3.1.2 — no Terms of Use (EULA) link in the description of a subscription app.** This one is caught by an automated metadata scan, so it burns the whole review slot before a human ever opens the build. Compliant in-app paywall copy does not help.
+- Legal URLs in the metadata that redirect to a dead endpoint. Apple requires a *functional* link, and a marketing site behind a proxy can 301 into an internal `http://host:8080/...` origin. Test the exact string you pasted, following redirects.
 - Data collection answers do not match SDK behavior.
 - Stripe used for mobile-consumed digital goods where IAP is required.
 - Sign in with Apple missing when the app offers third-party social login and Apple requires it.

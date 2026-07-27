@@ -71,6 +71,12 @@ Coordination rules (Apple indexes name + subtitle + keywords, each word once):
 - Put top keywords in the **title** (strongest signal), asset-type keywords in subtitle, the rest in keywords — **no word repeats across the three**.
 - Keyword list: comma-separated, **no spaces** after commas.
 - Run generated copy through a **humanizer** pass (cut AI-tells: rigid "• Label: description" lists, three-part structures, puffery) so it doesn't read machine-generated.
+- **Subscription apps: append a Terms of Use (EULA) link + a privacy link to the description in every locale.** Missing this is an automatic Guideline 3.1.2 rejection (see Phase 9). Localize the label but keep the literal string `EULA` in the text — `asc review doctor` matches on it, and a translated-only label (e.g. French "CLUF") leaves the warning unresolved. Description is 4000 chars, so the two lines always fit.
+
+```
+Terms of Use (EULA): https://example.com/terms
+Privacy Policy: https://example.com/privacy
+```
 
 Two field groups, two asc resources:
 
@@ -189,14 +195,48 @@ Still web-UI-only (not in Apple's public API):
 | Content Rights | `asc app-setup info set --content-rights` (Phase 6) |
 | Age Rating | `asc age-rating edit --all-none` (Phase 6) |
 | IAP "Missing Metadata" | group localization (Phase 5) |
+| `legal.subscription.terms_of_use_link` (one per locale) | append the EULA line to the description (Phase 3) |
 
 Then submit with `asc review submit` (attaches the build, creates the submission, adds items, and submits in one wrapper) — do this last, after `asc review doctor` is clean apart from the 1.0 "What's New" false positive. `asc review status --app <APP_ID>` tracks state afterward.
 
 ---
 
+## Phase 9 — Rejection recovery
+
+Read the actual reason first, verbatim, before touching anything:
+
+```
+asc web review show --app <APP_ID> --apple-id <APPLE_ID>
+```
+
+Guideline 3.1.2 with "does not include a functional link to the Terms of Use (EULA) in the app's metadata" is an **automated** rejection — no human opened the build, so nothing in the binary is wrong. Fix the description (Phase 3) and resubmit.
+
+**Do not create a new review submission.** A subscription app's submission carries four items: the app version, the subscription group version, and one item per subscription. After a rejection only the app version item is `REJECTED`; the subscription items stay `READY_FOR_REVIEW` while the subscriptions themselves sit at `IN_REVIEW`. A fresh submission drops them and restarts subscription review from zero. Refresh the existing one instead:
+
+```
+asc review items list --submission <SUB_ID>        # find the REJECTED item
+asc review items update --id <ITEM_ID> --resolved true
+asc review doctor --app <APP_ID>
+asc review submissions-submit --id <SUB_ID> --confirm
+```
+
+Item IDs are base64 of `<submissionId>|<typeCode>|<resourceId>` — type `6` = appStoreVersion, `18` = subscriptionVersion, `19` = subscriptionGroupVersion. Decode them to tell the items apart.
+
+A rejected version returns to an editable state, so you can swap in a newer build with `asc versions attach-build --version-id <VERSION_ID> --build-id <BUILD_ID>`. That is only locked once the version is actually released. If a newer build is already sitting in TestFlight and the rejection cost you the queue slot anyway, attaching it is free — and it removes the need for a post-approval OTA.
+
+Right before resubmitting, `asc review doctor` will still report `review.submission.unresolved_issues` and `version.state.editable`. Both are artifacts of the pre-submit state and clear on submit; check that all four items read `READY_FOR_REVIEW` instead.
+
+---
+
 ## Legal-pages web note (Astro)
 
-If the marketing/legal site (privacy/terms/support pages) 522s or 301-loops on trailing slashes: set Astro `trailingSlash: 'never'` + `build: { format: 'file' }` (flat `.html` files) and an nginx `try_files $uri $uri.html ...` with a `^/(.+)/$ → /$1` 301. Make link helpers emit no-slash paths. Keep per-page canonical/hreflang (SEO) but point the language switcher at each locale's homepage (`/`, `/tr`, `/es`), not the translated current path, if that's the desired UX.
+If the marketing/legal site (privacy/terms/support pages) 522s or 301-loops on trailing slashes: set Astro `trailingSlash: 'never'` + `build: { format: 'file' }` (flat `.html` files) and an nginx `try_files $uri $uri.html ...` with a `^/(.+)/$ → /$1` 301. Make link helpers emit no-slash paths.
+
+Add `absolute_redirect off;` to that nginx server block. Behind a proxy nginx does not know the public scheme or port, so with the default `absolute_redirect on` the 301 answers `Location: http://host:8080/terms` — downgraded to http, internal port leaked, and the client gets a 522. A relative `Location: /terms` preserves the original scheme and host. This bites exactly the legal URLs Apple requires to be functional, and it is invisible unless you request the trailing-slash form your app actually links to:
+
+```
+curl -sIL -w '%{http_code} %{url_effective}\n' -o /dev/null https://example.com/terms/
+``` Keep per-page canonical/hreflang (SEO) but point the language switcher at each locale's homepage (`/`, `/tr`, `/es`), not the translated current path, if that's the desired UX.
 
 ---
 
@@ -206,3 +246,4 @@ If the marketing/legal site (privacy/terms/support pages) 522s or 301-loops on t
 2. Do screenshots + ASO + IAP config in parallel background jobs; verify every screenshot (RTL/slow-boot silently fail).
 3. Expect the **subscription group localization** trap (Phase 5) — the top cause of "why is it still not ready" loops. The old support-url / web-only traps are mostly gone now that `asc` covers those fields.
 4. Keep the demo account and backend live from submission through review.
+5. Write the EULA/privacy lines into the description in the same pass that writes the rest of the ASO copy (Phase 3). Discovering it after submission costs a full review cycle for a two-line metadata edit.
