@@ -16,6 +16,9 @@ Do not submit until every item is true:
 - App privacy answers match actual SDKs and data collection.
 - Demo account or fully featured demo mode is provided if the app needs login.
 - Review notes explain non-obvious features, required hardware, test data, purchases, and restricted flows.
+- A screen-recorded demo video is attached to the review.
+- No screen is unfinished, empty, or labelled "coming soon".
+- User-generated content apps have report, block, a support contact, and automated moderation.
 - Regional compliance issues are handled for the target countries.
 
 ## Apple Review Notes
@@ -30,6 +33,45 @@ Include:
 - Contact email.
 
 Do not make reviewers discover hidden setup steps.
+
+Write them for someone who has never seen the app:
+
+- Short bullet points, numbered steps for each flow to test.
+- Plain sentences. Generated copy reads dense and slows the reviewer down.
+- One block per area: subscription testing, main flow, social features, permissions, account and safety controls.
+- Give the reviewer prepared state instead of setup work — a dedicated account that auto-accepts friend requests, a fixed invite code, seeded data.
+
+Attach a demo video as well. Screen record the main flow and add a text overlay per section. This is the highest-return item in the whole submission: it answers the questions that otherwise become a rejection or an escalation.
+
+The goal is a boring review.
+
+## Review Speed and Triage
+
+Reviews are sorted into tiers, and the tier decides the wait:
+
+1. Straightforward review → first pile, usually within 48 hours.
+2. Open questions or complexity → escalated to a senior specialist, where the multi-week waits happen.
+
+Stay in the first pile:
+
+- Submit an MVP. The first review of an app is the slowest one; every extra feature adds review surface.
+- Add features in later updates, when the app already has an approval history.
+- Accept tier 2 only when the product genuinely is complex (banking, health or biometric data, marketplaces).
+
+When you need it faster:
+
+- Request an expedited review for a critical bug fix, a launch event, or a marketing date. No justification field is required.
+- Request a phone call from App Review. Almost nobody does, and it appears to be a separate queue.
+- After a rejection, ask for **all** outstanding reasons at once. Otherwise a fix ships, a second unrelated reason arrives, and each round costs another cycle. A call is the fastest way out of that loop.
+
+## Hold Until a Later Update
+
+These are allowed but reviewer-dependent. Shipping them in a first submission risks the escalation tier for no gain:
+
+- Transaction abandon offers (a discount shown when the user dismisses the paywall).
+- Exit offers on the in-app "manage subscription" flow — a questionnaire plus a cheaper plan, instead of a straight deep link to the App Store subscription page.
+
+Ship them in a later update, explain them in the review notes, and include a demo of the feature. Never make a reviewer discover a monetization flow that was not described.
 
 ## Metadata Gate
 
@@ -125,6 +167,13 @@ When the app has traffic:
 - Data collection answers do not match SDK behavior.
 - Stripe used for mobile-consumed digital goods where IAP is required.
 - Sign in with Apple missing when the app offers third-party social login and Apple requires it.
+- A remote paywall changed to a non-compliant state after review passed.
+- Review prompt fired during onboarding.
+- Fake social proof ("#1 on the App Store") or absolute claims ("fixes 100% of X") in metadata or UI.
+- A 1:1 clone of an existing app. Shared patterns are fine; a copy is not.
+- User-generated content with no report, block, or moderation path.
+
+Review outcomes are subjective by design, so the same build can pass with one reviewer and fail with another. Treat the list above as reducing the odds, not as a guarantee. If a rejection is wrong, challenge it by citing the specific guideline and the evidence in the build — complaining does not move it.
 
 ## Official References
 
@@ -140,3 +189,4 @@ When the app has traffic:
 - Viktor experiments link: https://super-easy-apps.kit.com/12-app-store-experiments
 - Paul Solt screenshot article: https://x.com/PaulSolt/status/2037591726227902555
 - Viktor deeper packaging post: https://x.com/seraleev/status/2010023256984879170?s=20
+- Frederick James on 48-hour approvals (review tiers, notes, expediting): https://x.com/frederickjames/status/2086419927548809285
