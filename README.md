@@ -31,6 +31,7 @@ stack in seconds.
 - `payments.md`: payments swap contract, RevenueCat/Stripe playbooks, situational providers.
 - `storekit-paywall-debug.md`: iOS paywall stuck on "Plans are loading" / empty RevenueCat offering — ordered checklist to find and fix it, banking agreement first.
 - `observability.md`: crash + analytics swap contract, Sentry/PostHog playbooks, alternates.
+- `performance.md`: bottleneck hunting — measure-first loop, per-stack profiler matrix, budgets, and the bundle/render/query/cache/runtime playbooks.
 - `ai-features.md`: optional backend-only AI provider playbook.
 - `app-store.md`: App Store review and packaging checklist.
 - `aso.md`: ASO, metadata, screenshot, and product page workflow.

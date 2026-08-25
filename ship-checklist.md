@@ -78,6 +78,18 @@ See `web.md` for the contract behind these items.
 - Core loop events are captured.
 - Errors do not log secrets or full tokens.
 
+## Performance
+
+See `performance.md` for the budgets, the profiler matrix, and the review method.
+
+- Numbers come from production builds, not dev servers.
+- No N+1 on any list endpoint; every filter/join/sort column is indexed; list queries are bounded and paginated by keyset.
+- Lists that grow with the data are virtualized; no component renders more than twice per interaction.
+- Next.js First Load JS under 130 kB gzip per route; Expo JS bundle under 4 MB.
+- Cached endpoints hit above 80%, invalidate on write, and never put per-user data in a shared cache.
+- No blocking or synchronous work on the request path; every fan-out is bounded.
+- Before/after numbers recorded for anything claimed as an optimization.
+
 ## Security
 
 See `security.md` for the full playbook and the review method.
