@@ -407,6 +407,7 @@ Verified 2026-07-07 (llms.txt URLs curl-checked 200; Tailwind has none).
 - UI work: use `ui-ux-pro-max` first, then `frontend-design` or `design-taste-frontend`.
 - Marketing/screenshot/landing-style composition: use `gpt-taste` when motion or high-conversion visuals matter.
 - React component architecture: use `vercel-composition-patterns`.
+- Anything slow: start at `performance.md` to identify the bottleneck class, then use the skill below that matches it. A skill applied before the class is known is a guess.
 - React performance: use `vercel-react-best-practices`.
 - Postgres: use `postgresql-database-engineering`.
 - Postgres performance: also use `supabase-postgres-best-practices`.

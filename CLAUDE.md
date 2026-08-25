@@ -16,6 +16,7 @@ Primary instructions:
 - `docs/payments.md`
 - `docs/storekit-paywall-debug.md`
 - `docs/observability.md`
+- `docs/performance.md` (links to `performance/bundle-size.md`, `performance/rendering.md`, `performance/queries.md`, `performance/caching.md`, `performance/runtime.md`)
 - `docs/ai-features.md`
 - `docs/app-store.md`
 - `docs/app-store-submission-runbook.md`
