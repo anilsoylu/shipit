@@ -55,6 +55,7 @@ Before implementing:
 - No "flexibility" or "configurability" that wasn't requested.
 - No error handling for impossible scenarios.
 - If you write 200 lines and it could be 50, rewrite it.
+- Only add comments as a last resort for weird cases. Prefer short comments.
 
 Ask yourself: "Would a senior engineer say this is overcomplicated?" If yes, simplify.
 
